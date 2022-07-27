@@ -14,11 +14,11 @@ const Puzzles = () => {
     const getPuzzles = async () => {
       try {
         const results = await getDocs(collection(db, 'puzzles'));
-        let data: any = [];
+        let data: Array<Puzzle> = [];
         results.forEach((puzzle) => {
           let info = puzzle.data();
           info.id = puzzle.id;
-          data.push(info);
+          data.push(info as Puzzle);
         });
         for (const puzzle of data) {
           const url = await getDownloadURL(ref(storage, puzzle.image));
@@ -36,7 +36,7 @@ const Puzzles = () => {
     <section id="puzzles">
       <h1>Puzzles</h1>
       <div className="puzzle-grid">
-        {puzzles.map((puzzle: any) => {
+        {puzzles.map((puzzle: Puzzle) => {
           return (
             <div className="puzzle" key={puzzle.id}>
               <a href={`/puzzles/${puzzle.id}`}>
