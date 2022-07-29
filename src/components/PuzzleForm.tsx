@@ -2,7 +2,7 @@ import { doc, setDoc, collection } from 'firebase/firestore/lite';
 import { ref, getStorage, uploadBytes } from 'firebase/storage';
 import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
 import { db } from '../firebase/client';
-import { FormProps } from '../types.d';
+import { FormProps, HiddenItem } from '../types.d';
 
 const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
   const storage = getStorage();
@@ -17,9 +17,6 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
 
   // Overlay puzzle image onto canvas when file is selected
   const loadImage = () => {
-    const puzzleImage = document.getElementById(
-      'puzzle-preview'
-    ) as HTMLImageElement;
     const image = document.getElementById('image') as HTMLInputElement;
     if (image.files) {
       const file = image.files[0];
@@ -27,17 +24,39 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
       reader.addEventListener(
         'load',
         () => {
-          if (typeof reader.result == 'string') puzzleImage.src = reader.result;
+          // Remove the previously selected image before loading the new one
+          const board = document.getElementById('board');
+          const prevImage = document.getElementById('puzzle-image');
+          if (prevImage) board?.removeChild(prevImage);
+          if (typeof reader.result == 'string') {
+            // Create the image & add it to the DOM
+            const puzzleImage = document.createElement(
+              'img'
+            ) as HTMLImageElement;
+            puzzleImage.id = 'puzzle-image';
+            puzzleImage.alt = 'puzzle image';
+            puzzleImage.src = reader.result;
+            board?.appendChild(puzzleImage);
+            // After image is loaded, get width & height & adjust canvas
+            puzzleImage.addEventListener('load', () => {
+              const width = puzzleImage.width;
+              const height = puzzleImage.height;
+              const canvas = document.getElementById(
+                'canvas'
+              ) as HTMLCanvasElement;
+              canvas.style.width = `${width}px`;
+              canvas.style.height = `${height}px`;
+            });
+          }
         },
         false
       );
-
       if (file) reader.readAsDataURL(file);
     }
   };
 
-  const [hiddenItems, setHiddenItems] = useState<any[]>([]);
-
+  // Declare state for adding hidden items to puzzle
+  const [hiddenItems, setHiddenItems] = useState<HiddenItem[]>([]);
   const [description, setDescription] = useState<string>('');
   const [x1, setX1] = useState<number>(0);
   const [y1, setY1] = useState<number>(0);
@@ -46,33 +65,31 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
   const [getDesc, setGetDesc] = useState<boolean>(false);
 
   const getItemArea = () => {
-    // Set up canvas information
+    // Set up canvas information & coord variables
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
+    let x1 = 0,
+      x2 = 0,
+      y1 = 0,
+      y2 = 0;
     if (ctx) {
       ctx.strokeStyle = '#FF0000';
-      let x1 = 0,
-        x2 = 0,
-        y1 = 0,
-        y2 = 0;
       // Add eventlisteners to click & drag to draw a rectangle
       const startRect = (e: MouseEvent) => {
-        x1 = Math.round(
-          ((e.clientX - rect.left) / (rect.right - rect.left)) * canvas.width
-        );
-        y1 = Math.round(
-          ((e.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height
-        );
+        x1 = (e.clientX - rect.left) / rect.width;
+        y1 = (e.clientY - rect.top) / rect.height;
       };
       const endRect = (e: MouseEvent) => {
-        x2 = Math.round(
-          ((e.clientX - rect.left) / (rect.right - rect.left)) * canvas.width
+        x2 = (e.clientX - rect.left) / rect.width;
+        y2 = (e.clientY - rect.top) / rect.height;
+        // Scale rectangle with canvas dimensions & draw using integers
+        ctx.strokeRect(
+          Math.round(x1 * canvas.width),
+          Math.round(y1 * canvas.height),
+          Math.round(x2 * canvas.width) - Math.round(x1 * canvas.width),
+          Math.round(y2 * canvas.height) - Math.round(y1 * canvas.height)
         );
-        y2 = Math.round(
-          ((e.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height
-        );
-        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
         // Remove eventlisteners, save coords in state, & get item description after drawing
         canvas.removeEventListener('mousedown', startRect);
         canvas.removeEventListener('mouseup', endRect);
@@ -96,6 +113,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
       return a - b;
     });
 
+    // Create new hidden item
     const newItem = {
       description: description,
       minX: xVals[0],
@@ -104,11 +122,11 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
       maxY: yVals[1],
     };
 
+    // Add new hidden items list to state
     const tempItems = hiddenItems;
     tempItems.push(newItem);
     setHiddenItems(tempItems);
     setGetDesc(false);
-    console.log(hiddenItems);
   };
 
   const uploadPuzzle = async (e: FormEvent<HTMLFormElement>) => {
@@ -174,12 +192,6 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
             </button>
           </div>
         )}
-        <img
-          src=""
-          alt="puzzle preview"
-          id="puzzle-preview"
-          className="puzzle-preview"
-        />
         <canvas id="canvas"></canvas>
       </div>
       <div className="image">
