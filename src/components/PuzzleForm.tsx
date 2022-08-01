@@ -1,4 +1,12 @@
-import { doc, setDoc, collection } from 'firebase/firestore/lite';
+import {
+  doc,
+  setDoc,
+  getDocs,
+  collection,
+  limit,
+  where,
+  query,
+} from 'firebase/firestore/lite';
 import { ref, getStorage, uploadBytes } from 'firebase/storage';
 import { FormEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { db } from '../firebase/client';
@@ -188,27 +196,48 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
     saveItem();
   }, [itemCoords]);
 
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [uploaded, setUploaded] = useState<boolean>(false);
+
+  const [newId, setNewId] = useState<string>('');
+
   const uploadPuzzle = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const storage = getStorage();
+
     // Upload image file to firebase storage
     if (imageFile) {
+      setUploading(true);
       const imageRef = ref(storage, `puzzles/${imageName}`);
+      try {
+        await uploadBytes(imageRef, imageFile).then(() => {
+          console.log('Uploaded image');
+        });
 
-      uploadBytes(imageRef, imageFile).then((snapshot) => {
-        console.log('Uploaded image');
-      });
+        // Upload puzzle document to firestore
+        await setDoc(doc(collection(db, 'puzzles')), {
+          author: username,
+          authorId: userId,
+          title: title,
+          timestamp: new Date(),
+          image: `puzzles/${imageName}`,
+          hiddenItems: hiddenItems,
+        });
 
-      // Upload puzzle document to firestore
-      await setDoc(doc(collection(db, 'puzzles')), {
-        author: username,
-        authorId: userId,
-        title: title,
-        timestamp: new Date(),
-        image: `puzzles/${imageName}`,
-        hiddenItems: hiddenItems,
-      });
+        const newPuzzle = await getDocs(
+          query(
+            collection(db, 'puzzles'),
+            where('title', '==', title),
+            where('author', '==', username),
+            limit(1)
+          )
+        );
+        setNewId(newPuzzle.docs[0].id);
+        setUploading(false);
+        setUploaded(true);
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -282,13 +311,28 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
                 </div>
               )}
             </ol>
+
             <form onSubmit={uploadPuzzle}>
-              <button type="submit">Create Puzzle</button>
+              {!uploading && !uploaded && hiddenItems.length > 0 && (
+                <button type="submit">Create Puzzle</button>
+              )}
+              {!uploading && !uploaded && hiddenItems.length == 0 && (
+                <p>Add some items!</p>
+              )}
             </form>
           </div>
-          <div id="board" className="board">
-            <img src={imageSrc} alt="" onLoad={scaleCanvas} />
-          </div>
+          {!uploading && !uploaded && (
+            <div id="board" className="board">
+              <img src={imageSrc} alt="" onLoad={scaleCanvas} />
+            </div>
+          )}
+          {uploading && <div className="uploading">Uploading Puzzle</div>}
+          {uploaded && (
+            <div className="uploaded">
+              <p>Puzzle Successfully Uploaded</p>
+              <a href={`/puzzles/${newId}`}>Go to puzzle</a>
+            </div>
+          )}
         </div>
       )}
     </section>
