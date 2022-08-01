@@ -1,12 +1,11 @@
 import { doc, setDoc, collection } from 'firebase/firestore/lite';
 import { ref, getStorage, uploadBytes } from 'firebase/storage';
-import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
+import { FormEvent, SyntheticEvent, useState } from 'react';
 import { db } from '../firebase/client';
 import { FormProps, HiddenItem } from '../types.d';
 
-const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
-  const storage = getStorage();
-
+const PuzzleForm = ({ username, userId }: FormProps) => {
+  // Set title in state on user input
   const [title, setTitle] = useState<string>('');
 
   const handleChange = (name: string) => (e: SyntheticEvent) => {
@@ -15,44 +14,53 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
     if (name == 'description') setDescription(target.value);
   };
 
-  // Overlay puzzle image onto canvas when file is selected
+  // Get image file information from input element & save it in state
+  const [imageSrc, setImageSrc] = useState<string>('');
+  const [imageFile, setImageFile] = useState<Blob>();
+  const [imageName, setImageName] = useState<string>('');
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+
   const loadImage = () => {
-    const image = document.getElementById('image') as HTMLInputElement;
-    if (image.files) {
-      const file = image.files[0];
+    const imageInput = document.getElementById('image') as HTMLInputElement;
+    if (imageInput.files) {
+      const file = imageInput.files[0];
       const reader = new FileReader();
       reader.addEventListener(
         'load',
         () => {
-          // Remove the previously selected image before loading the new one
-          const board = document.getElementById('board');
-          const prevImage = document.getElementById('puzzle-image');
-          if (prevImage) board?.removeChild(prevImage);
           if (typeof reader.result == 'string') {
-            // Create the image & add it to the DOM
-            const puzzleImage = document.createElement(
-              'img'
-            ) as HTMLImageElement;
-            puzzleImage.id = 'puzzle-image';
-            puzzleImage.alt = 'puzzle image';
-            puzzleImage.src = reader.result;
-            board?.appendChild(puzzleImage);
-            // After image is loaded, get width & height & adjust canvas
-            puzzleImage.addEventListener('load', () => {
-              const width = puzzleImage.width;
-              const height = puzzleImage.height;
-              const canvas = document.getElementById(
-                'canvas'
-              ) as HTMLCanvasElement;
-              canvas.style.width = `${width}px`;
-              canvas.style.height = `${height}px`;
-            });
+            setImageSrc(reader.result);
+            setImageFile(file);
+            setImageName(file.name);
+            setImageLoaded(true);
           }
         },
         false
       );
       if (file) reader.readAsDataURL(file);
     }
+  };
+
+  // Render canvas or show errors depending on title & image file
+  const [imageSelected, setImageSelected] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+
+  const validateTitleForm = () => {
+    if (title.length == 0) setError('Enter a title.');
+    else if (imageSrc.length == 0) setError('Select an image.');
+    else setImageSelected(true);
+  };
+
+  // Get width & height of image & set canvas dimensions
+  const [canvasWidth, setCanvasWidth] = useState<number>(0);
+  const [canvasHeight, setCanvasHeight] = useState<number>(0);
+
+  const scaleCanvas = (e: SyntheticEvent) => {
+    const puzzleImage = e.target as HTMLImageElement;
+    const width = puzzleImage.width;
+    const height = puzzleImage.height;
+    setCanvasWidth(width);
+    setCanvasHeight(height);
   };
 
   // Declare state for adding hidden items to puzzle
@@ -65,7 +73,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
   const [getDesc, setGetDesc] = useState<boolean>(false);
 
   const getItemArea = () => {
-    // Set up canvas information & coord variables
+    // Set up canvas information & coord variables for drawing rectangles
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
@@ -75,6 +83,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
       y2 = 0;
     if (ctx) {
       ctx.strokeStyle = '#FF0000';
+      ctx.lineWidth = 2;
       // Add eventlisteners to click & drag to draw a rectangle
       const startRect = (e: MouseEvent) => {
         x1 = (e.clientX - rect.left) / rect.width;
@@ -132,14 +141,12 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
   const uploadPuzzle = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const storage = getStorage();
     // Upload image file to firebase storage
-    const image = document.getElementById('image') as HTMLInputElement;
-    if (image.files) {
-      const file = image.files[0];
-      const imageName = image.files[0].name;
+    if (imageFile) {
       const imageRef = ref(storage, `puzzles/${imageName}`);
 
-      uploadBytes(imageRef, file).then((snapshot) => {
+      uploadBytes(imageRef, imageFile).then((snapshot) => {
         console.log('Uploaded image');
       });
 
@@ -157,56 +164,82 @@ const PuzzleForm = ({ username, userId, loggedIn }: FormProps) => {
 
   return (
     <section id="puzzle-form">
-      <div className="items">
-        <h2>Hidden Items</h2>
-        <ol>
-          {hiddenItems.map((item) => {
-            return <li key={hiddenItems.indexOf(item)}>{item.description}</li>;
-          })}
-        </ol>
-        <button type="button" onClick={getItemArea}>
-          Add Item
-        </button>
-      </div>
-      <div className="title">
-        <label htmlFor="title">Title: </label>
-        <input
-          type="text"
-          name="title"
-          onChange={handleChange('title')}
-          required
-        />
-      </div>
-      <div id="board" className="board">
-        {getDesc && (
-          <div className="description">
-            <h3>Description</h3>
+      {!imageSelected && (
+        <div className="title-and-image">
+          <div className="title">
+            <label htmlFor="title">Title: </label>
             <input
               type="text"
-              name="description"
-              onChange={handleChange('description')}
+              name="title"
+              onChange={handleChange('title')}
               required
             />
-            <button type="button" onClick={saveItem}>
-              Save Item
-            </button>
           </div>
-        )}
-        <canvas id="canvas"></canvas>
-      </div>
-      <div className="image">
-        <label htmlFor="image">Image: </label>
-        <input
-          type="file"
-          name="image"
-          id="image"
-          onChange={loadImage}
-          required
-        />
-      </div>
-      <form onSubmit={uploadPuzzle}>
-        <button type="submit">Add Puzzle</button>
-      </form>
+          <div className="image">
+            <label htmlFor="image" className="image-label">
+              Upload Image
+            </label>
+            <input
+              type="file"
+              name="image"
+              id="image"
+              onChange={loadImage}
+              required
+            />
+          </div>
+          <button type="button" onClick={validateTitleForm}>
+            Use this image
+          </button>
+          {error.length > 0 && <p className="error">{error}</p>}
+          <div id="image-preview">
+            {imageLoaded && (
+              <img src={imageSrc} alt="puzzle preview" id="puzzle-image"></img>
+            )}
+            <p>Select an image to preview.</p>
+          </div>
+        </div>
+      )}
+      {imageSelected && (
+        <div className="hidden-items">
+          <div className="items">
+            <h2>Hidden Items</h2>
+            <ol>
+              {hiddenItems.map((item) => {
+                return (
+                  <li key={hiddenItems.indexOf(item)}>{item.description}</li>
+                );
+              })}
+              {getDesc && (
+                <div className="description">
+                  <input
+                    type="text"
+                    name="description"
+                    placeholder="Enter a description."
+                    onChange={handleChange('description')}
+                  />
+                  <button type="button" onClick={saveItem}>
+                    Save Item
+                  </button>
+                </div>
+              )}
+            </ol>
+            <button type="button" onClick={getItemArea}>
+              Add Item
+            </button>
+            <form onSubmit={uploadPuzzle}>
+              <button type="submit">Add Puzzle</button>
+            </form>
+          </div>
+          <div id="board" className="board">
+            <canvas
+              id="canvas"
+              width={canvasWidth}
+              height={canvasHeight}
+            ></canvas>
+            <img src={imageSrc} alt="" onLoad={scaleCanvas} />
+          </div>
+        </div>
+      )}
     </section>
   );
 };
