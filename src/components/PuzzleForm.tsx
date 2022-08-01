@@ -1,6 +1,6 @@
 import { doc, setDoc, collection } from 'firebase/firestore/lite';
 import { ref, getStorage, uploadBytes } from 'firebase/storage';
-import { FormEvent, SyntheticEvent, useState } from 'react';
+import { FormEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { db } from '../firebase/client';
 import { FormProps, HiddenItem } from '../types.d';
 
@@ -20,8 +20,8 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
   const [imageName, setImageName] = useState<string>('');
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
-  const loadImage = () => {
-    const imageInput = document.getElementById('image') as HTMLInputElement;
+  const loadImage = (e: SyntheticEvent) => {
+    const imageInput = e.target as HTMLInputElement;
     if (imageInput.files) {
       const file = imageInput.files[0];
       const reader = new FileReader();
@@ -41,7 +41,7 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
     }
   };
 
-  // Render canvas or show errors depending on title & image file
+  // Render canvas or show errors depending on title & image file content
   const [imageSelected, setImageSelected] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
@@ -51,7 +51,7 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
     else setImageSelected(true);
   };
 
-  // Get width & height of image & set canvas dimensions
+  // Get width & height of image & set canvas dimensions (run on image load)
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
 
@@ -63,18 +63,30 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
     setCanvasHeight(height);
   };
 
-  // Declare state for adding hidden items to puzzle
+  // Store hidden items in state & set up reference for remove item eventlistener (avoids stale state)
   const [hiddenItems, setHiddenItems] = useState<HiddenItem[]>([]);
-  const [description, setDescription] = useState<string>('');
-  const [x1, setX1] = useState<number>(0);
-  const [y1, setY1] = useState<number>(0);
-  const [x2, setX2] = useState<number>(0);
-  const [y2, setY2] = useState<number>(0);
-  const [getDesc, setGetDesc] = useState<boolean>(false);
+  const refItems = useRef(hiddenItems);
+  useEffect(() => {
+    refItems.current = hiddenItems;
+  }, [hiddenItems]);
 
-  const getItemArea = () => {
-    // Set up canvas information & coord variables for drawing rectangles
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+  // Save information about current item to add to hiddenItems
+  const [description, setDescription] = useState<string>('');
+  const [itemCoords, setItemCoords] = useState<Array<number>>([]);
+  const [getDesc, setGetDesc] = useState<boolean>(false);
+  const [placingRect, setPlacingRect] = useState<boolean>(false);
+
+  const getItemArea = (description: string) => {
+    // Remove description input & add instructions before drawing
+    setGetDesc(false);
+    setPlacingRect(true);
+    // NOT VERY REACT - DO THIS WITHOUT DOM MANIPULATION
+    // Create new canvas & set up coord variables for drawing rectangles
+    const board = document.getElementById('board');
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    board?.appendChild(canvas);
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
     let x1 = 0,
@@ -85,11 +97,17 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
       ctx.strokeStyle = '#FF0000';
       ctx.lineWidth = 2;
       // Add eventlisteners to click & drag to draw a rectangle
+
+      // Save starting position of rectangle & add event listener for animation
       const startRect = (e: MouseEvent) => {
         x1 = (e.clientX - rect.left) / rect.width;
         y1 = (e.clientY - rect.top) / rect.height;
+        canvas.addEventListener('mousemove', animateRect);
       };
-      const endRect = (e: MouseEvent) => {
+
+      // Clear canvas & redraw rectangle to current mouse position
+      const animateRect = (e: MouseEvent) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         x2 = (e.clientX - rect.left) / rect.width;
         y2 = (e.clientY - rect.top) / rect.height;
         // Scale rectangle with canvas dimensions & draw using integers
@@ -99,44 +117,76 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
           Math.round(x2 * canvas.width) - Math.round(x1 * canvas.width),
           Math.round(y2 * canvas.height) - Math.round(y1 * canvas.height)
         );
-        // Remove eventlisteners, save coords in state, & get item description after drawing
+      };
+
+      // Draw final rectangle, clean up eventlisteners, & save coords
+      const endRect = (e: MouseEvent) => {
+        canvas.removeEventListener('mousemove', animateRect);
+        x2 = (e.clientX - rect.left) / rect.width;
+        y2 = (e.clientY - rect.top) / rect.height;
+        ctx.strokeRect(
+          Math.round(x1 * canvas.width),
+          Math.round(y1 * canvas.height),
+          Math.round(x2 * canvas.width) - Math.round(x1 * canvas.width),
+          Math.round(y2 * canvas.height) - Math.round(y1 * canvas.height)
+        );
         canvas.removeEventListener('mousedown', startRect);
         canvas.removeEventListener('mouseup', endRect);
-        setX1(x1);
-        setY1(y1);
-        setX2(x2);
-        setY2(y2);
-        setGetDesc(true);
+        setItemCoords([x1, x2, y1, y2]);
+        setPlacingRect(false);
+        // DON'T ALLOW MULTIPLE CANVASES TO BE LISTENING
+
+        // Create button at start location of rectangle - delete canvas & remove item from state on click
+        const remove = document.createElement('button') as HTMLButtonElement;
+        remove.textContent = 'X';
+        remove.addEventListener('click', () => {
+          board?.removeChild(canvas);
+          board?.removeChild(remove);
+          const filteredItems = refItems.current.filter(
+            (item) => item.description !== description
+          );
+          setHiddenItems(filteredItems);
+        });
+        remove.style.position = 'absolute';
+        remove.style.top = Math.round(y1 * 100).toString() + '%';
+        remove.style.left = Math.round(x1 * 100).toString() + '%';
+        board?.appendChild(remove);
       };
+      // Start listening for input
       canvas.addEventListener('mousedown', startRect);
       canvas.addEventListener('mouseup', endRect);
     }
   };
 
-  const saveItem = () => {
-    // Get X & Y min & max values by sorting arrays numerically
-    const xVals = [x1, x2].sort((a, b) => {
-      return a - b;
-    });
-    const yVals = [y1, y2].sort((a, b) => {
-      return a - b;
-    });
+  // Add new hidden item to array every time new coords are received from canvas
+  useEffect(() => {
+    const saveItem = () => {
+      if (description.length) {
+        // Get X & Y min & max values by sorting arrays numerically
+        const xVals = [itemCoords[0], itemCoords[1]].sort((a, b) => {
+          return a - b;
+        });
+        const yVals = [itemCoords[2], itemCoords[3]].sort((a, b) => {
+          return a - b;
+        });
 
-    // Create new hidden item
-    const newItem = {
-      description: description,
-      minX: xVals[0],
-      maxX: xVals[1],
-      minY: yVals[0],
-      maxY: yVals[1],
+        // Create new hidden item
+        const newItem = {
+          description: description,
+          minX: xVals[0],
+          maxX: xVals[1],
+          minY: yVals[0],
+          maxY: yVals[1],
+        };
+
+        // Add new hidden items list to state
+        const tempItems = [...hiddenItems];
+        tempItems.push(newItem);
+        setHiddenItems(tempItems);
+      }
     };
-
-    // Add new hidden items list to state
-    const tempItems = hiddenItems;
-    tempItems.push(newItem);
-    setHiddenItems(tempItems);
-    setGetDesc(false);
-  };
+    saveItem();
+  }, [itemCoords]);
 
   const uploadPuzzle = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -205,37 +255,38 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
             <h2>Hidden Items</h2>
             <ol>
               {hiddenItems.map((item) => {
-                return (
-                  <li key={hiddenItems.indexOf(item)}>{item.description}</li>
-                );
+                return <li key={item.description}>{item.description}</li>;
               })}
+              {!getDesc && !placingRect && (
+                <button type="button" onClick={() => setGetDesc(true)}>
+                  Add Item
+                </button>
+              )}
+              {placingRect && (
+                <p className="drag-instructions">Click and drag on image!</p>
+              )}
               {getDesc && (
                 <div className="description">
                   <input
                     type="text"
                     name="description"
-                    placeholder="Enter a description."
+                    placeholder="Enter a unique description."
                     onChange={handleChange('description')}
                   />
-                  <button type="button" onClick={saveItem}>
-                    Save Item
+                  <button
+                    type="button"
+                    onClick={() => getItemArea(description)}
+                  >
+                    Set Area
                   </button>
                 </div>
               )}
             </ol>
-            <button type="button" onClick={getItemArea}>
-              Add Item
-            </button>
             <form onSubmit={uploadPuzzle}>
-              <button type="submit">Add Puzzle</button>
+              <button type="submit">Create Puzzle</button>
             </form>
           </div>
           <div id="board" className="board">
-            <canvas
-              id="canvas"
-              width={canvasWidth}
-              height={canvasHeight}
-            ></canvas>
             <img src={imageSrc} alt="" onLoad={scaleCanvas} />
           </div>
         </div>
