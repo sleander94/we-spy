@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore/lite';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore/lite';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { db } from '../firebase/client';
 import { Puzzle } from '../types.d';
+import PuzzleCard from './PuzzleCard';
 
 const Puzzles = () => {
   const [puzzles, setPuzzles] = useState<Puzzle[]>([]);
@@ -13,7 +14,9 @@ const Puzzles = () => {
   useEffect(() => {
     const getPuzzles = async () => {
       try {
-        const results = await getDocs(collection(db, 'puzzles'));
+        const results = await getDocs(
+          query(collection(db, 'puzzles'), orderBy('timestamp', 'desc'))
+        );
         let data: Array<Puzzle> = [];
         results.forEach((puzzle) => {
           let info = puzzle.data();
@@ -38,13 +41,14 @@ const Puzzles = () => {
       <div className="puzzle-grid">
         {puzzles.map((puzzle: Puzzle) => {
           return (
-            <div className="puzzle" key={puzzle.id}>
-              <a href={`/puzzles/${puzzle.id}`}>
-                <h2>{puzzle.title}</h2>
-                <img src={puzzle.image} alt="puzzle thumbnail" />
-                <p>{puzzle.author}</p>
-              </a>
-            </div>
+            <PuzzleCard
+              key={puzzle.id}
+              id={puzzle.id}
+              title={puzzle.title}
+              author={puzzle.author}
+              image={puzzle.image}
+              timestamp={puzzle.timestamp}
+            />
           );
         })}
       </div>
