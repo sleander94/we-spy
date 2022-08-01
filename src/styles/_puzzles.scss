@@ -1,0 +1,36 @@
+#puzzles {
+  text-align: center;
+  padding: 1rem;
+  color: $light;
+  display: grid;
+  grid: 2rem 1fr / 1fr;
+  gap: 1rem;
+  height: calc(100vh - 60px);
+  h1 {
+    color: $medium-red;
+    text-decoration: underline;
+  }
+  .loading-container {
+    display: grid;
+    align-items: center;
+    height: 100%;
+    .animation {
+      font-size: 2rem;
+      animation: shimmer 1s alternate 0s infinite;
+    }
+  }
+  .puzzle-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+@keyframes shimmer {
+  from {
+    color: $light;
+  }
+  to {
+    color: $medium-red;
+  }
+}

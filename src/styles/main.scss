@@ -1,0 +1,49 @@
+$dark: #2a3340;
+$medium: #733f2d;
+$medium-red: #bf4f45;
+$soft-red: #f28066;
+$light: #f2bc8d;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  display: grid;
+  margin-top: 60px;
+  background-color: $dark;
+}
+
+button {
+  cursor: pointer;
+  background-color: inherit;
+  color: inherit;
+  border: 1px solid $medium-red;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@import './puzzles';
+@import './navbar';
+@import './puzzleform';
+@import './puzzlepage';
+@import './puzzlecard';
+
+@keyframes shimmer {
+  from {
+    color: $light;
+  }
+  to {
+    color: $medium-red;
+  }
+}

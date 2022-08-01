@@ -1,0 +1,52 @@
+#nav {
+  z-index: 3;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  color: $light;
+  background-color: $dark;
+  white-space: nowrap;
+  box-shadow: 0 0 3px 3px black;
+  a {
+    padding: 1rem;
+    text-decoration: none;
+    color: $light;
+    h1 {
+      color: $medium-red;
+    }
+  }
+  .user-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem;
+  }
+}
+
+#nav.game-nav {
+  a {
+    left: 150px;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  #nav {
+    .user-actions {
+      gap: 0;
+      p {
+        display: none;
+      }
+    }
+  }
+  #nav.game-nav {
+    a {
+      left: 0;
+    }
+  }
+}
