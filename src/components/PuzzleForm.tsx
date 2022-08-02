@@ -1,16 +1,17 @@
-import {
-  doc,
-  setDoc,
-  getDocs,
-  collection,
-  limit,
-  where,
-  query,
-} from 'firebase/firestore/lite';
+import { doc, setDoc } from 'firebase/firestore/lite';
 import { ref, getStorage, uploadBytes } from 'firebase/storage';
-import { FormEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  FormEvent,
+  SyntheticEvent,
+  ChangeEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { db } from '../firebase/client';
 import { FormProps, HiddenItem } from '../types.d';
+import ImageSelector from './ImageSelector';
 
 const PuzzleForm = ({ username, userId }: FormProps) => {
   // Set title in state on user input
@@ -28,7 +29,7 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
   const [imageName, setImageName] = useState<string>('');
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
-  const loadImage = (e: SyntheticEvent) => {
+  const loadImage = (e: ChangeEvent<HTMLInputElement>) => {
     const imageInput = e.target as HTMLInputElement;
     if (imageInput.files) {
       const file = imageInput.files[0];
@@ -156,8 +157,8 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
           setHiddenItems(filteredItems);
         });
         remove.style.position = 'absolute';
-        remove.style.top = Math.round(y1 * 100).toString() + '%';
-        remove.style.left = Math.round(x1 * 100).toString() + '%';
+        remove.style.top = (y1 * 100).toString() + '%';
+        remove.style.left = (x1 * 100).toString() + '%';
         board?.appendChild(remove);
       };
       // Start listening for input
@@ -199,7 +200,7 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploaded, setUploaded] = useState<boolean>(false);
 
-  const [newId, setNewId] = useState<string>('');
+  const [id, setId] = useState<string>('');
 
   const uploadPuzzle = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -214,25 +215,30 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
           console.log('Uploaded image');
         });
 
+        // Generate id & date for puzzle
+        const newId = uuidv4();
+        setId(newId);
+        const newDate = new Date();
+
         // Upload puzzle document to firestore
-        await setDoc(doc(collection(db, 'puzzles')), {
+        await setDoc(doc(db, 'puzzles', newId), {
           author: username,
           authorId: userId,
           title: title,
-          timestamp: new Date(),
+          timestamp: newDate,
           image: `puzzles/${imageName}`,
           hiddenItems: hiddenItems,
         });
 
-        const newPuzzle = await getDocs(
-          query(
-            collection(db, 'puzzles'),
-            where('title', '==', title),
-            where('author', '==', username),
-            limit(1)
-          )
-        );
-        setNewId(newPuzzle.docs[0].id);
+        // Create leaderboard for puzzle
+        await setDoc(doc(db, 'leaderboards', newId), {
+          author: username,
+          title: title,
+          timestamp: newDate,
+          image: `puzzles/${imageName}`,
+          scores: [],
+        });
+
         setUploading(false);
         setUploaded(true);
       } catch (err) {
@@ -244,39 +250,14 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
   return (
     <section id="puzzle-form">
       {!imageSelected && (
-        <div className="title-and-image">
-          <div className="title">
-            <label htmlFor="title">Title: </label>
-            <input
-              type="text"
-              name="title"
-              onChange={handleChange('title')}
-              required
-            />
-          </div>
-          <div className="image">
-            <label htmlFor="image" className="image-label">
-              Upload Image
-            </label>
-            <input
-              type="file"
-              name="image"
-              id="image"
-              onChange={loadImage}
-              required
-            />
-          </div>
-          <button type="button" onClick={validateTitleForm}>
-            Use this image
-          </button>
-          {error.length > 0 && <p className="error">{error}</p>}
-          <div id="image-preview">
-            {imageLoaded && (
-              <img src={imageSrc} alt="puzzle preview" id="puzzle-image"></img>
-            )}
-            <p>Select an image to preview.</p>
-          </div>
-        </div>
+        <ImageSelector
+          handleChange={handleChange}
+          loadImage={loadImage}
+          validateTitleForm={validateTitleForm}
+          error={error}
+          imageLoaded={imageLoaded}
+          imageSrc={imageSrc}
+        />
       )}
       {imageSelected && (
         <div className="hidden-items">
@@ -323,14 +304,14 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
           </div>
           {!uploading && !uploaded && (
             <div id="board" className="board">
-              <img src={imageSrc} alt="" onLoad={scaleCanvas} />
+              <img id="image" src={imageSrc} alt="" onLoad={scaleCanvas} />
             </div>
           )}
           {uploading && <div className="uploading">Uploading Puzzle</div>}
           {uploaded && (
             <div className="uploaded">
               <p>Puzzle Successfully Uploaded</p>
-              <a href={`/puzzles/${newId}`}>Go to puzzle</a>
+              <a href={`/puzzles/${id}`}>Go to puzzle</a>
             </div>
           )}
         </div>
