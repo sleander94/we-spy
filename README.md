@@ -68,12 +68,22 @@ Go to the [milestones tab](../../milestone/1) to track your progress.
 
 ### Description
 
-**Required:** update [your repository](https://stackoverflow.com/questions/7757751/how-do-you-change-a-repository-description-on-github) with a short description of your project.
+My project is a site where users can create their own photo hunt games (think iSpy or Where's Waldo) and share them with the community. 
+
+Features planned for V1:
+- Create a puzzle from an uploaded image
+- Play a puzzle & save your score to the leaderboards
+- Delete your own puzzles
+
+Planned, nice to have features:
+- Like, comment, and share puzzles
+- Search and sort all puzzles
+
 
 ### Mockups
 
 *View `README.md` to see how to replace me with mockups.*
 
-| ![Benjamin Bannekat](/mockups/github-cat.png) | ![Benjamin Bannekat](/mockups/github-cat.png) |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| ![Benjamin Bannekat](/mockups/github-cat.png) | ![Benjamin Bannekat](/mockups/github-cat.png) |
+| ![Homepage](/mockups/wespymockup1.jpg) | 
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Puzzle Page](/mockups/wespymockup2.jpg)
