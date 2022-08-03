@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect, SyntheticEvent } from 'react';
-import { doc, getDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, updateDoc, increment } from 'firebase/firestore/lite';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { db } from '../firebase/client';
 import { HiddenItem, Puzzle, FormProps } from '../types.d';
@@ -35,7 +35,19 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
         console.error(err);
       }
     };
+
+    // Increase views by 1
+    const addView = async () => {
+      try {
+        await updateDoc(doc(db, 'puzzles', `${id}`), {
+          views: increment(1),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
     getPuzzle();
+    addView();
   }, []);
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
