@@ -16,7 +16,7 @@ const Puzzles = () => {
     const getPuzzles = async () => {
       try {
         const results = await getDocs(
-          query(collection(db, 'puzzles'), orderBy('timestamp', 'desc'))
+          query(collection(db, 'puzzles'), orderBy('views', 'desc'))
         );
         let data: Array<Puzzle> = [];
         results.forEach((puzzle) => {
@@ -37,9 +37,36 @@ const Puzzles = () => {
     getPuzzles();
   }, []);
 
+  const sortPuzzles = async (order: string) => {
+    try {
+      setLoading(true);
+      const results = await getDocs(
+        query(collection(db, 'puzzles'), orderBy(order, 'desc'))
+      );
+      let data: Array<Puzzle> = [];
+      results.forEach((puzzle) => {
+        let info = puzzle.data();
+        info.id = puzzle.id;
+        data.push(info as Puzzle);
+      });
+      for (const puzzle of data) {
+        const url = await getDownloadURL(ref(storage, puzzle.image));
+        puzzle.image = url;
+      }
+      setPuzzles(data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <section id="puzzles">
       <h1>Puzzles</h1>
+      <div className="sort-buttons">
+        <button onClick={() => sortPuzzles('views')}>Most Viewed</button>
+        <button onClick={() => sortPuzzles('timestamp')}>Recent</button>
+      </div>
       {loading && (
         <div className="loading-container">
           <div className="animation">Loading Puzzles...</div>
@@ -56,6 +83,8 @@ const Puzzles = () => {
                 author={puzzle.author}
                 image={puzzle.image}
                 timestamp={puzzle.timestamp}
+                likes={puzzle.likes}
+                views={puzzle.views}
               />
             );
           })}
