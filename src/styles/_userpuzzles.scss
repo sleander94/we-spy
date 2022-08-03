@@ -1,0 +1,44 @@
+#user-puzzles {
+  text-align: center;
+  padding: 1rem;
+  color: $light;
+  display: grid;
+  justify-items: center;
+  grid: 2rem 1fr / 1fr;
+  gap: 1rem;
+  #puzzle-container {
+    width: 100%;
+    max-width: 1800px;
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    grid: 2rem 1fr / 1fr;
+    h1 {
+      color: $medium-red;
+      text-decoration: underline;
+    }
+    .loading-container,
+    .deleting-container {
+      z-index: 3;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      background: #00000050;
+      .animation {
+        font-size: 2rem;
+        animation: shimmer 1s alternate 0s infinite;
+      }
+    }
+    .puzzle-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+  }
+}

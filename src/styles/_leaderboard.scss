@@ -1,0 +1,24 @@
+#leaderboard {
+  width: 100%;
+  max-width: 1200px;
+  border: 1px solid $soft-red;
+  border-bottom: none;
+  .headers {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    padding: 1rem;
+    color: $medium-red;
+    text-decoration: underline;
+  }
+  .score {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    padding: 0.5rem;
+    color: $light;
+    border-bottom: 1px solid $soft-red;
+  }
+}
