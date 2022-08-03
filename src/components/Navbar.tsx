@@ -1,8 +1,8 @@
 import { auth } from '../firebase/client';
 import { signInWithRedirect, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { NavProps } from '../types.d';
+import { UserProps } from '../types.d';
 
-const Navbar = ({ loggedIn, username }: NavProps) => {
+const Navbar = ({ loggedIn, username, userId }: UserProps) => {
   const provider = new GoogleAuthProvider();
 
   return (
@@ -19,8 +19,9 @@ const Navbar = ({ loggedIn, username }: NavProps) => {
       )}
       {loggedIn && (
         <div className="user-actions">
-          <p>Hello, {username.split(' ')[0]}</p>
+          {username.length > 0 && <p>Hello, {username.split(' ')[0]}</p>}
           <a href="/puzzles/new">New Puzzle</a>
+          <a href={`/users/${userId}/puzzles`}>My Puzzles</a>
           <button onClick={() => signOut(auth)}>Logout</button>
         </div>
       )}
