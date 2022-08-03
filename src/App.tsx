@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { auth } from './firebase/client';
 import { onAuthStateChanged } from 'firebase/auth';
 import PuzzleForm from './components/PuzzleForm';
@@ -30,6 +35,7 @@ const App = () => {
       <Navbar loggedIn={loggedIn} username={username} userId={userId} />
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/puzzles" />} />
           <Route path="/puzzles" element={<Puzzles />} />
           <Route
             path="/puzzles/:id"
