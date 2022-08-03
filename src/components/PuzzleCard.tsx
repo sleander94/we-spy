@@ -7,6 +7,8 @@ const PuzzleCard = ({
   author,
   image,
   timestamp,
+  likes,
+  views,
 }: PuzzleCardProps) => {
   return (
     <div className="puzzle">
@@ -16,10 +18,18 @@ const PuzzleCard = ({
       <a className="thumbnail" href={`/puzzles/${id}`}>
         <img src={image} alt="puzzle thumbnail" />
       </a>
-      <div className="author-date">
+      <Link to={`/leaderboards/${id}`}>View Leaderboard</Link>
+      <div className="puzzle-info">
         <p>{author.split(' ')[0]}</p>
-        <Link to={`/leaderboards/${id}`}>View Leaderboard</Link>
         <p>{timestamp?.toDate().toLocaleDateString()}</p>
+        <p className="views">
+          <img
+            className="view-icon"
+            src={require('../assets/icons/eye-outline.svg').default}
+            alt=""
+          ></img>
+          {views}
+        </p>
       </div>
     </div>
   );
