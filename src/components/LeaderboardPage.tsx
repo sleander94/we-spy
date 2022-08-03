@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore/lite';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { db } from '../firebase/client';
 import { LeaderboardData } from '../types.d';
-import PuzzleCard from './PuzzleCard';
 import Leaderboard from './Leaderboard';
 
 const LeaderboardPage = () => {
@@ -31,15 +30,18 @@ const LeaderboardPage = () => {
   return (
     <section id="leaderboard-page">
       <h1>Leaderboard</h1>
-      {leaderboard && id && (
-        <PuzzleCard
-          id={id}
-          title={leaderboard.title}
-          author={leaderboard.author}
-          image={leaderboard.image}
-          timestamp={leaderboard.timestamp}
-        />
-      )}
+      <div className="puzzle-info">
+        <h2>{leaderboard?.title}</h2>
+        <p className="author">
+          Created by {leaderboard?.author.split(' ')[0]} on{' '}
+          {leaderboard?.timestamp.toDate().toLocaleDateString()}
+        </p>
+        <Link to={`/puzzles/${id}`}>Play Puzzle</Link>
+        <Link className="image-link" to={`/puzzles/${id}`}>
+          {' '}
+          <img src={leaderboard?.image} alt="puzzle thumbnail" />
+        </Link>
+      </div>
       {leaderboard && <Leaderboard scores={leaderboard.scores} />}
     </section>
   );
