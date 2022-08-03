@@ -10,10 +10,10 @@ import {
   useState,
 } from 'react';
 import { db } from '../firebase/client';
-import { FormProps, HiddenItem } from '../types.d';
+import { UserProps, HiddenItem } from '../types.d';
 import ImageSelector from './ImageSelector';
 
-const PuzzleForm = ({ username, userId }: FormProps) => {
+const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   // Set title in state on user input
   const [title, setTitle] = useState<string>('');
 
@@ -143,7 +143,6 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
         canvas.removeEventListener('mouseup', endRect);
         setItemCoords([x1, x2, y1, y2]);
         setPlacingRect(false);
-        // DON'T ALLOW MULTIPLE CANVASES TO BE LISTENING
 
         // Create button at start location of rectangle - delete canvas & remove item from state on click
         const remove = document.createElement('button') as HTMLButtonElement;
@@ -228,6 +227,8 @@ const PuzzleForm = ({ username, userId }: FormProps) => {
           timestamp: newDate,
           image: `puzzles/${imageName}`,
           hiddenItems: hiddenItems,
+          likes: [],
+          views: 0,
         });
 
         // Create leaderboard for puzzle
