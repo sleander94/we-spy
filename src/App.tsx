@@ -7,6 +7,7 @@ import Puzzles from './components/Puzzles';
 import PuzzlePage from './components/PuzzlePage';
 import Navbar from './components/Navbar';
 import LeaderboardPage from './components/LeaderboardPage';
+import UserPuzzles from './components/UserPuzzles';
 import './styles/main.css';
 
 const App = () => {
@@ -26,7 +27,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <Navbar loggedIn={loggedIn} username={username} />
+      <Navbar loggedIn={loggedIn} username={username} userId={userId} />
       <Router>
         <Routes>
           <Route path="/puzzles" element={<Puzzles />} />
@@ -45,6 +46,16 @@ const App = () => {
             path="/puzzles/new"
             element={
               <PuzzleForm
+                loggedIn={loggedIn}
+                username={username}
+                userId={userId}
+              />
+            }
+          />
+          <Route
+            path="/users/:id/puzzles"
+            element={
+              <UserPuzzles
                 loggedIn={loggedIn}
                 username={username}
                 userId={userId}
