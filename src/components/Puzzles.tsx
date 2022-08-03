@@ -7,6 +7,7 @@ import PuzzleCard from './PuzzleCard';
 
 const Puzzles = () => {
   const [puzzles, setPuzzles] = useState<Puzzle[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const storage = getStorage();
 
@@ -28,6 +29,7 @@ const Puzzles = () => {
           puzzle.image = url;
         }
         setPuzzles(data);
+        setLoading(false);
       } catch (err) {
         console.error(err);
       }
@@ -38,20 +40,27 @@ const Puzzles = () => {
   return (
     <section id="puzzles">
       <h1>Puzzles</h1>
-      <div className="puzzle-grid">
-        {puzzles.map((puzzle: Puzzle) => {
-          return (
-            <PuzzleCard
-              key={puzzle.id}
-              id={puzzle.id}
-              title={puzzle.title}
-              author={puzzle.author}
-              image={puzzle.image}
-              timestamp={puzzle.timestamp}
-            />
-          );
-        })}
-      </div>
+      {loading && (
+        <div className="loading-container">
+          <div className="animation">Loading Puzzles...</div>
+        </div>
+      )}
+      {!loading && (
+        <div className="puzzle-grid">
+          {puzzles.map((puzzle: Puzzle) => {
+            return (
+              <PuzzleCard
+                key={puzzle.id}
+                id={puzzle.id}
+                title={puzzle.title}
+                author={puzzle.author}
+                image={puzzle.image}
+                timestamp={puzzle.timestamp}
+              />
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 };
