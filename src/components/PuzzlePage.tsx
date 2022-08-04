@@ -5,12 +5,12 @@ import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { db } from '../firebase/client';
 import { HiddenItem, Puzzle, FormProps } from '../types.d';
 import ScoreUploader from './ScoreUploader';
+import Selector from './Selector';
 
 const PuzzlePage = ({ username, userId }: FormProps) => {
   const { id } = useParams<string>();
   const [puzzle, setPuzzle] = useState<Puzzle>();
   const [hiddenItems, setHiddenItems] = useState<Array<HiddenItem>>([]);
-  const [activeItem, setActiveItem] = useState<string>('');
 
   // Get puzzle from firestore & image URL from storage before setting state
 
@@ -50,6 +50,7 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
     addView();
   }, []);
 
+  // Keep canvas the same size as image when window size is adjusted
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
 
@@ -81,48 +82,36 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
     }
   }, [timer]);
 
-  // Set the first hidden item to active after puzzle is loaded
-  useEffect(() => {
-    if (puzzle && puzzle.hiddenItems.length > 0) {
-      const description = puzzle.hiddenItems[0].description;
-      const firstItem = document.getElementById(description);
-      firstItem?.classList.add('active');
-      setActiveItem(description);
-    }
-  }, [puzzle]);
+  // Show Selector component & save mouse location in state on canvas click
+  const [selector, setSelector] = useState<boolean>(false);
+  const [x, setX] = useState<number>(0);
+  const [y, setY] = useState<number>(0);
 
-  // If mouse location is within item's coordinates, remove it from hiddenItems & mark it off list
-  const handleGuess = (description: string) => (e: any) => {
-    // Get coordinates of mouse click on canvas
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    const rect = canvas.getBoundingClientRect();
-    let x = (e.clientX - rect.left) / rect.width;
-    let y = (e.clientY - rect.top) / rect.height;
+  const displaySelector = (e: any) => {
+    let element = document.getElementById('canvas') as HTMLCanvasElement;
+    const canvas = element.getBoundingClientRect();
+    let x = (e.clientX - canvas.left) / canvas.width;
+    let y = (e.clientY - canvas.top) / canvas.height;
+    setX(Number(x));
+    setY(Number(y));
+    setSelector(!selector);
+  };
 
-    // Check if active item's location matches mouse coordinates
+  // If x & y from mouse event are within item's coordinates, remove it from hiddenItems & mark it off list
+  const handleGuess = (description: string) => {
     for (const item of hiddenItems) {
       if (item.description == description) {
         if (x < item.maxX && x > item.minX && y < item.maxY && y > item.minY) {
-          // Remove item from hiddenItems if guess is successful
           if (hiddenItems.indexOf(item) || hiddenItems.indexOf(item) == 0) {
             const filteredItems = hiddenItems.filter(
               (currItem) => item.description !== currItem.description
             );
             setHiddenItems(filteredItems);
-
-            // Remove active class & mark item as found
+            setSelector(!selector);
             const itemEl = document.getElementById(
               item.description
             ) as HTMLElement;
             itemEl.classList.add('found');
-            itemEl.classList.remove('active');
-
-            // Set the next unfound item to active
-            const nextItem = document.querySelector('li:not(.found)');
-            if (nextItem) {
-              nextItem.classList.add('active');
-              setActiveItem(nextItem.id);
-            }
           }
         } else {
           console.log('Try again!');
@@ -131,23 +120,13 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
     }
   };
 
-  // Remove active status from currently active item & apply it to clicked item
-  const changeActive = (description: string) => (e: any) => {
-    const elements = document.getElementsByClassName('active');
-    const currActive = elements[0];
-    if (currActive) currActive.classList.remove('active');
-    const newActive = e.target as HTMLElement;
-    newActive.classList.add('active');
-    setActiveItem(description);
-  };
-
   return (
     <section id="puzzle-page">
       {hiddenItems.length == 0 && gameStart && (
         <ScoreUploader username={username} timer={Number(timer)} />
       )}
       <div className="gameboard">
-        <div className="game-text">
+        <div id="game-text" className="game-text">
           <h2>{puzzle?.title}</h2>
           <ol>
             {puzzle?.hiddenItems.map((item: HiddenItem) => {
@@ -155,7 +134,6 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
                 <li
                   id={item.description}
                   key={puzzle.hiddenItems.indexOf(item)}
-                  onClick={changeActive(item.description)}
                 >
                   {puzzle.hiddenItems.indexOf(item) + 1}. {item.description}
                 </li>
@@ -165,6 +143,14 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
           <p className="timer">{timer}</p>
         </div>
         <div id="game-image" className="game-image">
+          {selector && (
+            <Selector
+              x={x}
+              y={y}
+              hiddenItems={hiddenItems}
+              handleGuess={handleGuess}
+            />
+          )}
           {imageLoaded && (
             <img id="image" src={imageSrc} alt="" onLoad={scaleCanvas} />
           )}
@@ -172,7 +158,7 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
             id="canvas"
             width={canvasWidth}
             height={canvasHeight}
-            onClick={handleGuess(activeItem)}
+            onClick={displaySelector}
           ></canvas>
         </div>
       </div>
