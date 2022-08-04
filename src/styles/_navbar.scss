@@ -12,8 +12,8 @@
   background-color: $dark;
   white-space: nowrap;
   box-shadow: 0 0 3px 3px black;
+  padding: 1rem;
   a {
-    padding: 1rem;
     text-decoration: none;
     color: $light;
     h1 {
@@ -25,22 +25,37 @@
     justify-content: space-between;
     align-items: center;
     gap: 2rem;
-    padding: 1rem;
-  }
-}
-
-#nav.game-nav {
-  a {
-    left: 150px;
+    font-size: 1rem;
+    padding-right: 1rem;
+    button {
+      font-size: inherit;
+    }
+    a {
+      cursor: pointer;
+      border: 1px solid $medium-red;
+      padding: 4px 16px;
+    }
+    a:hover,
+    button:hover {
+      background-color: $soft-red;
+      color: $dark;
+    }
   }
 }
 
 @media only screen and (max-width: 900px) {
   #nav {
+    height: 60px;
+    gap: 0;
     .user-actions {
-      gap: 0;
+      padding: 0;
+      gap: 8px;
       p {
         display: none;
+      }
+      button,
+      a {
+        padding: 4px 4px;
       }
     }
   }

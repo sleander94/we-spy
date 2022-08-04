@@ -1,8 +1,15 @@
 #leaderboard {
   width: 100%;
   max-width: 1200px;
-  border: 1px solid $soft-red;
+  border: 1px solid $medium-red;
   border-bottom: none;
+  text-align: center;
+  text-decoration: none;
+  h1 {
+    font-size: 2rem;
+    color: $medium-red;
+    padding: 1rem;
+  }
   .headers {
     display: grid;
     grid-auto-flow: column;
@@ -10,7 +17,7 @@
     justify-items: center;
     padding: 1rem;
     color: $medium-red;
-    text-decoration: underline;
+    border-bottom: 1px solid $medium-red;
   }
   .score {
     display: grid;
@@ -19,6 +26,6 @@
     justify-items: center;
     padding: 0.5rem;
     color: $light;
-    border-bottom: 1px solid $soft-red;
+    border-bottom: 1px solid $medium-red;
   }
 }

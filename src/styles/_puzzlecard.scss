@@ -1,7 +1,11 @@
 .puzzle {
   display: grid;
-  flex-direction: column;
-  max-height: 100%;
+  gap: 1rem;
+  height: 100%;
+  max-height: 400px;
+  width: 100%;
+  min-width: 300px;
+  max-width: 400px;
   padding: 8px;
   border: 1px solid $soft-red;
   a {
@@ -9,13 +13,46 @@
     color: inherit;
     font-size: 1.2rem;
   }
-  img {
+  .thumbnail {
+    max-height: 100%;
     align-self: center;
-    width: 100%;
-    height: auto;
+    overflow: hidden;
+  }
+  img {
+    width: auto;
+    height: 225px;
+  }
+  .title {
+    font-weight: bold;
+    color: $medium-red;
+  }
+  .puzzle-info {
+    display: flex;
+    justify-content: space-between;
   }
   p {
     align-self: end;
+  }
+  .leaderboard-link {
+    justify-self: center;
+    padding: 4px 16px;
+    border: 1px solid $medium-red;
+  }
+  .leaderboard-link:hover {
+    background-color: $soft-red;
+    color: $dark;
+  }
+  .views {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+    align-items: center;
+  }
+  .view-icon {
+    height: 20px;
+    width: auto;
+    filter: invert(71%) sepia(73%) saturate(2965%) hue-rotate(319deg)
+      brightness(102%) contrast(90%);
   }
   .author-date {
     display: flex;

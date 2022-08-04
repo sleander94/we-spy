@@ -3,26 +3,40 @@
   padding: 1rem;
   color: $light;
   display: grid;
+  justify-items: center;
   grid: 2rem 1fr / 1fr;
   gap: 1rem;
-  height: calc(100vh - 60px);
   h1 {
     color: $medium-red;
     text-decoration: underline;
   }
+  .sort-buttons {
+    display: flex;
+    gap: 1rem;
+    button {
+      padding: 4px 16px;
+    }
+    button:hover {
+      background-color: $soft-red;
+      color: $dark;
+    }
+  }
   .loading-container {
     display: grid;
     align-items: center;
-    height: 100%;
+    margin-top: 20rem;
     .animation {
       font-size: 2rem;
       animation: shimmer 1s alternate 0s infinite;
     }
   }
   .puzzle-grid {
-    display: grid;
+    width: 100%;
+    max-width: 1800px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
 }
 

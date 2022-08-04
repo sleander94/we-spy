@@ -19,13 +19,15 @@ body {
   display: grid;
   margin-top: 60px;
   background-color: $dark;
+  min-height: calc(100vh - 60px);
 }
 
 button {
   cursor: pointer;
-  background-color: inherit;
-  color: inherit;
+  background-color: $dark;
+  color: $light;
   border: 1px solid $medium-red;
+  padding: 4px 16px;
 }
 
 code {
@@ -34,10 +36,16 @@ code {
 }
 
 @import './puzzles';
+@import './userpuzzles';
 @import './navbar';
 @import './puzzleform';
 @import './puzzlepage';
 @import './puzzlecard';
+@import './scoreuploader';
+@import './leaderboardpage';
+@import './leaderboard';
+@import './selector';
+@import './imageselector';
 
 @keyframes shimmer {
   from {

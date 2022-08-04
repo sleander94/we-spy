@@ -2,11 +2,6 @@
   display: grid;
   justify-items: center;
   padding: 1rem;
-  h1 {
-    color: $medium-red;
-    padding: 1rem;
-    text-decoration: underline;
-  }
   .puzzle-info {
     width: 100%;
     max-width: 1200px;
@@ -15,31 +10,61 @@
     align-items: center;
     padding: 2rem;
     gap: 1rem;
-    grid: 1fr 1fr 1fr / 1fr 1fr;
-    border: 1px solid $soft-red;
+    grid: 1fr / 1fr 1fr;
+    border: 1px solid $medium-red;
     border-bottom: none;
-    h2 {
-      grid-area: 1 / 1 / 2 / 2;
-      font-size: 2.3rem;
-      color: $medium-red;
-      align-self: start;
+    .text-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      height: 100%;
+      h2 {
+        font-size: 2.3rem;
+        color: $medium-red;
+      }
+      p {
+        color: $light;
+      }
+      a {
+        font-size: 1.5rem;
+        color: $light;
+        padding: 4px 16px;
+        border: 1px solid $medium-red;
+        text-decoration: none;
+      }
+      .play-link:hover {
+        background-color: $soft-red;
+        color: $dark;
+      }
     }
-    p {
-      grid-area: 3 / 1 / 4 / 2;
-      color: $light;
-      align-self: end;
-    }
-    a {
-      grid-area: 2 / 1 / 3 / 2;
-      font-size: 2rem;
-      color: $soft-red;
-    }
-    a.image-link {
-      grid-area: 1 / 2 / 4 / 3;
+    .image-link {
+      border: none;
+      img {
+        border: 1px solid $medium-red;
+      }
     }
     img {
-      width: 300px;
+      max-width: 400px;
       height: auto;
+    }
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  #leaderboard-page {
+    .puzzle-info {
+      grid: 1fr 1fr / 1fr;
+      .text-info {
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+      }
+      img {
+        max-width: 300px;
+        height: auto;
+      }
     }
   }
 }

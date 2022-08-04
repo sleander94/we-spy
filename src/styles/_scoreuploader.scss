@@ -9,6 +9,7 @@
   display: grid;
   justify-items: center;
   align-items: center;
+  text-align: center;
   #score-uploader {
     width: 90%;
     max-width: 600px;
@@ -20,5 +21,43 @@
     border: 2px solid $medium-red;
     color: $light;
     background-color: $dark;
+    .links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      width: 100%;
+      font-size: 1rem;
+      a,
+      button {
+        background-color: inherit;
+        color: inherit;
+        border: 1px solid $medium-red;
+        padding: 4px 16px;
+        text-decoration: none;
+        font-size: inherit;
+      }
+      button:hover,
+      a:hover {
+        background-color: $soft-red;
+        color: $dark;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  #uploader-container {
+    #score-uploader {
+      .links {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        a,
+        button {
+          width: 100%;
+        }
+      }
+    }
   }
 }
