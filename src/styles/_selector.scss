@@ -1,0 +1,18 @@
+#selector {
+  grid-area: 1 / 1 / 2 / 2;
+  position: absolute;
+  z-index: 5;
+  background-color: $dark;
+  border: 1px solid $medium-red;
+  list-style: none;
+  li {
+    padding: 0.5rem;
+    color: $light;
+    cursor: pointer;
+    border: 1px solid $medium-red;
+  }
+  li:hover {
+    background-color: $soft-red;
+    color: $dark;
+  }
+}
