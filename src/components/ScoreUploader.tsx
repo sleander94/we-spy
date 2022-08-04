@@ -34,12 +34,14 @@ const ScoreUploader = ({ username, timer }: UploaderProps) => {
   return (
     <div id="uploader-container">
       <div id="score-uploader">
-        <div>You finished the puzzle in {timer} seconds!</div>
-        <Link to="" onClick={uploadScore}>
-          Add to Leaderboard
-        </Link>
-        <button onClick={() => window.location.reload()}>Play Again</button>
-        <Link to="/puzzles">Home</Link>
+        <div>You found everything in {timer} seconds!</div>
+        <div className="links">
+          <button onClick={() => window.location.reload()}>Play Again</button>
+          <Link to="" onClick={uploadScore}>
+            Add to Leaderboard
+          </Link>
+          <Link to="/puzzles">Home</Link>
+        </div>
       </div>
     </div>
   );
