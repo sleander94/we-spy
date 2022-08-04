@@ -1,20 +1,16 @@
 import { auth } from '../firebase/client';
-import { signInWithRedirect, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import { UserProps } from '../types.d';
 
 const Navbar = ({ loggedIn, username, userId }: UserProps) => {
-  const provider = new GoogleAuthProvider();
-
   return (
     <nav id="nav">
-      <a href="/puzzles">
+      <a className="title" href="/puzzles">
         <h1>We Spy</h1>
       </a>
       {!loggedIn && (
         <div className="user-actions">
-          <button onClick={() => signInWithRedirect(auth, provider)}>
-            Login
-          </button>
+          <button>Log in to continue</button>
         </div>
       )}
       {loggedIn && (
