@@ -103,7 +103,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
       y1 = 0,
       y2 = 0;
     if (ctx) {
-      ctx.strokeStyle = '#FF0000';
+      ctx.strokeStyle = '#bf4f45';
       ctx.lineWidth = 2;
       // Add eventlisteners to click & drag to draw a rectangle
 
@@ -266,15 +266,16 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
             <h2>Hidden Items</h2>
             <ol>
               {hiddenItems.map((item) => {
-                return <li key={item.description}>{item.description}</li>;
+                return (
+                  <li key={item.description}>
+                    {hiddenItems.indexOf(item) + 1}. {item.description}
+                  </li>
+                );
               })}
               {!getDesc && !placingRect && (
                 <button type="button" onClick={() => setGetDesc(true)}>
                   Add Item
                 </button>
-              )}
-              {placingRect && (
-                <p className="drag-instructions">Click and drag on image!</p>
               )}
               {getDesc && (
                 <div className="description">
@@ -283,14 +284,18 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
                     name="description"
                     placeholder="Enter a unique description."
                     onChange={handleChange('description')}
+                    autoFocus
                   />
                   <button
                     type="button"
                     onClick={() => getItemArea(description)}
                   >
-                    Set Area
+                    Confirm and Set Area
                   </button>
                 </div>
+              )}
+              {placingRect && (
+                <p className="drag-instructions">Click and drag on image!</p>
               )}
             </ol>
 
