@@ -64,6 +64,15 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
 
+  useEffect(() => {
+    const canvases = document.querySelectorAll('canvas');
+    for (let i = 0; i < canvases.length; i++) {
+      const canvas = canvases[0];
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+    }
+  }, [canvasWidth, canvasHeight]);
+
   const scaleCanvas = (e: SyntheticEvent) => {
     const puzzleImage = e.target as HTMLImageElement;
     const width = puzzleImage.width;
@@ -72,11 +81,17 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
     setCanvasHeight(height);
   };
 
+  window.onresize = () => {
+    const puzzleImage = document.getElementById('image') as HTMLImageElement;
+    setCanvasWidth(puzzleImage.width);
+    setCanvasHeight(puzzleImage.height);
+  };
+
   // Store hidden items in state & set up reference for remove item eventlistener (avoids stale state)
   const [hiddenItems, setHiddenItems] = useState<HiddenItem[]>([]);
-  const refItems = useRef(hiddenItems);
+  const itemsRef = useRef(hiddenItems);
   useEffect(() => {
-    refItems.current = hiddenItems;
+    itemsRef.current = hiddenItems;
   }, [hiddenItems]);
 
   // Save information about current item to add to hiddenItems
@@ -150,7 +165,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
         remove.addEventListener('click', () => {
           board?.removeChild(canvas);
           board?.removeChild(remove);
-          const filteredItems = refItems.current.filter(
+          const filteredItems = itemsRef.current.filter(
             (item) => item.description !== description
           );
           setHiddenItems(filteredItems);
@@ -250,6 +265,12 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
 
   return (
     <section id="puzzle-form">
+      <div className="mobile-message">
+        <div className="p-container">
+          <p>Mobile puzzle creation is still in the works.</p>{' '}
+          <p>For now, log in on a computer to create puzzles.</p>
+        </div>
+      </div>
       {!imageSelected && (
         <ImageSelector
           handleChange={handleChange}
@@ -298,7 +319,6 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
                 <p className="drag-instructions">Click and drag on image!</p>
               )}
             </ol>
-
             <form onSubmit={uploadPuzzle}>
               {!uploading && !uploaded && hiddenItems.length > 0 && (
                 <button type="submit">Create Puzzle</button>
