@@ -32,13 +32,20 @@
         .found {
           text-decoration: line-through;
         }
+        p {
+          margin-top: 2rem;
+          font-weight: bold;
+          font-size: 1.2rem;
+          text-align: center;
+          color: $medium-red;
+        }
       }
     }
     .game-image {
       display: grid;
       position: relative;
       margin-left: 200px;
-      width: 100%;
+      max-width: 100%;
       img,
       canvas {
         grid-area: 1 / 1 / 2 / 2;
@@ -61,7 +68,8 @@
       }
       .game-image {
         margin-left: 0;
-        width: 400%;
+        max-width: none;
+        width: 300%;
       }
     }
   }

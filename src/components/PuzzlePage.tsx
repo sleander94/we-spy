@@ -139,8 +139,8 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
                 </li>
               );
             })}
+            <p className="timer">Time: {timer.toFixed(1)} sec</p>
           </ol>
-          <p className="timer">{timer}</p>
         </div>
         <div id="game-image" className="game-image">
           {selector && (
