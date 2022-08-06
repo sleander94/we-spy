@@ -1,0 +1,20 @@
+#footer {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem;
+  width: 100%;
+  color: $light;
+  font-weight: bold;
+  img,
+  a {
+    width: 24px;
+    height: 24px;
+  }
+  a img {
+    filter: invert(71%) sepia(73%) saturate(2965%) hue-rotate(319deg)
+      brightness(102%) contrast(90%);
+  }
+}
