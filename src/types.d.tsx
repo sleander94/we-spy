@@ -1,5 +1,5 @@
 import { Timestamp } from 'firebase/firestore/lite';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, MutableRefObject } from 'react';
 
 // Custom Objects
 
@@ -11,6 +11,8 @@ export type Puzzle = {
   timestamp: Timestamp;
   image: string;
   hiddenItems: Array<HiddenItem>;
+  likes: Array<string>;
+  views: number;
 };
 
 export type PuzzleData = {
@@ -42,9 +44,10 @@ export type Score = {
 
 // Component Props
 
-export type NavProps = {
+export type UserProps = {
   loggedIn: boolean;
   username: string;
+  userId: string;
 };
 
 export type FormProps = {
@@ -64,6 +67,8 @@ export type PuzzleCardProps = {
   author: string;
   image: string;
   timestamp: Timestamp;
+  likes: Array<string>;
+  views: number;
 };
 
 export type LeaderboardProps = {
@@ -77,4 +82,19 @@ export type ImageSelectorProps = {
   error: string;
   imageLoaded: boolean;
   imageSrc: string;
+};
+
+export type SelectorProps = {
+  x: number;
+  y: number;
+  hiddenItems: Array<HiddenItem>;
+  handleGuess: Function;
+};
+
+export type SelectionCanvasProps = {
+  width: number;
+  height: number;
+  currDescription: string;
+  updateCoords: Function;
+  filterItems: Function;
 };
