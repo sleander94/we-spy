@@ -17,6 +17,7 @@ const ImageSelector = ({
           name="title"
           onChange={handleChange('title')}
           required
+          autoFocus
         />
       </div>
       <div className="image">
