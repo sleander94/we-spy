@@ -6,23 +6,29 @@ import {
   Navigate,
 } from 'react-router-dom';
 import { auth } from './firebase/client';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, GoogleAuthProvider } from 'firebase/auth';
 import PuzzleForm from './components/PuzzleForm';
 import Puzzles from './components/Puzzles';
 import PuzzlePage from './components/PuzzlePage';
 import Navbar from './components/Navbar';
 import LeaderboardPage from './components/LeaderboardPage';
 import UserPuzzles from './components/UserPuzzles';
+import LoginPrompt from './components/LoginPrompt';
+import Footer from './components/Footer';
 import './styles/main.css';
+import SelectionCanvas from './components/SelectionCanvas';
 
 const App = () => {
   const [username, setUsername] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
   const [loggedIn, setLoggedIn] = useState<boolean>(true);
 
+  const provider = new GoogleAuthProvider();
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
       if (user.displayName) setUsername(user.displayName);
+      if (user.displayName === null) setUsername('Guest');
       if (user.uid) setUserId(user.uid);
       setLoggedIn(true);
     } else {
@@ -33,6 +39,7 @@ const App = () => {
   return (
     <div className="App">
       <Navbar loggedIn={loggedIn} username={username} userId={userId} />
+      {!loggedIn && <LoginPrompt />}
       <Router>
         <Routes>
           <Route path="/" element={<Navigate to="/puzzles" />} />
@@ -70,6 +77,7 @@ const App = () => {
           />
         </Routes>
       </Router>
+      <Footer />
     </div>
   );
 };
