@@ -22,6 +22,12 @@ body {
   min-height: calc(100vh - 60px);
 }
 
+.App {
+  display: grid;
+  grid: 1fr 60px / 1fr;
+  min-height: 100%;
+}
+
 button {
   cursor: pointer;
   background-color: $dark;
@@ -46,6 +52,9 @@ code {
 @import './leaderboard';
 @import './selector';
 @import './imageselector';
+@import './loginprompt';
+@import './footer';
+@import './selectioncanvas';
 
 @keyframes shimmer {
   from {
