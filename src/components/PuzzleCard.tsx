@@ -18,7 +18,9 @@ const PuzzleCard = ({
       <a className="thumbnail" href={`/puzzles/${id}`}>
         <img src={image} alt="puzzle thumbnail" />
       </a>
-      <Link to={`/leaderboards/${id}`}>View Leaderboard</Link>
+      <Link className="leaderboard-link" to={`/leaderboards/${id}`}>
+        View Leaderboard
+      </Link>
       <div className="puzzle-info">
         <p>{author.split(' ')[0]}</p>
         <p>{timestamp?.toDate().toLocaleDateString()}</p>
