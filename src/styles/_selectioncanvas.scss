@@ -1,0 +1,15 @@
+.selection-canvas {
+  grid-area: 1 / 1 / 2 / 2;
+  z-index: 50;
+  width: 100%;
+  height: 100%;
+  canvas {
+    width: 100%;
+    height: 100%;
+  }
+  button {
+    pointer-events: all;
+    z-index: 999;
+    position: absolute;
+  }
+}
