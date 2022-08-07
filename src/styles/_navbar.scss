@@ -50,7 +50,8 @@
     .user-actions {
       padding: 0;
       gap: 8px;
-      p {
+      p,
+      .home {
         display: none;
       }
       button,

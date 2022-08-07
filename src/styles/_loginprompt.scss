@@ -3,7 +3,7 @@
   position: fixed;
   background: #00000050;
   width: 100%;
-  height: 100%;
+  height: 110%;
   top: 0;
   left: 0;
   display: grid;
@@ -11,14 +11,16 @@
   align-items: center;
   text-align: center;
   #login {
-    width: 90%;
+    position: fixed;
+    top: 30%;
+    width: 100%;
     max-width: 600px;
     display: grid;
     justify-items: center;
     align-items: center;
     padding: 1rem;
-    gap: 1rem;
-    border: 2px solid $medium-red;
+    gap: 2rem;
+    border: 1px solid $medium-red;
     color: $light;
     background-color: $dark;
     h2 {
@@ -40,6 +42,14 @@
     button:hover {
       background-color: $soft-red;
       color: $dark;
+    }
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  #login-container {
+    #login {
+      top: 40%;
     }
   }
 }

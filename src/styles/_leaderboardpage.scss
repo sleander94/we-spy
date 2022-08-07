@@ -1,7 +1,9 @@
 #leaderboard-page {
   display: grid;
   justify-items: center;
+  grid: 400px 1fr / 1fr;
   padding: 1rem;
+  gap: 0;
   .puzzle-info {
     width: 100%;
     max-width: 1200px;

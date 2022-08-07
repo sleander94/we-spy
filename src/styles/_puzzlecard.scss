@@ -1,13 +1,12 @@
 .puzzle {
   display: grid;
   gap: 1rem;
-  height: 100%;
   max-height: 400px;
   width: 100%;
   min-width: 300px;
   max-width: 400px;
   padding: 8px;
-  border: 1px solid $soft-red;
+  border: 1px solid $medium-red;
   a {
     text-decoration: none;
     color: inherit;
@@ -35,11 +34,12 @@
   }
   .leaderboard-link {
     justify-self: center;
+    align-self: center;
     padding: 4px 16px;
     border: 1px solid $medium-red;
   }
   .leaderboard-link:hover {
-    background-color: $soft-red;
+    background-color: $medium-red;
     color: $dark;
   }
   .views {
