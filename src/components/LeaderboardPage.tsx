@@ -29,14 +29,17 @@ const LeaderboardPage = () => {
 
   return (
     <section id="leaderboard-page">
-      <h1>Leaderboard</h1>
       <div className="puzzle-info">
-        <h2>{leaderboard?.title}</h2>
-        <p className="author">
-          Created by {leaderboard?.author.split(' ')[0]} on{' '}
-          {leaderboard?.timestamp.toDate().toLocaleDateString()}
-        </p>
-        <Link to={`/puzzles/${id}`}>Play Puzzle</Link>
+        <div className="text-info">
+          <h2>{leaderboard?.title}</h2>
+          <p className="author">
+            Created by {leaderboard?.author.split(' ')[0]} on{' '}
+            {leaderboard?.timestamp.toDate().toLocaleDateString()}
+          </p>
+          <Link className="play-link" to={`/puzzles/${id}`}>
+            Play Puzzle
+          </Link>
+        </div>
         <Link className="image-link" to={`/puzzles/${id}`}>
           {' '}
           <img src={leaderboard?.image} alt="puzzle thumbnail" />
