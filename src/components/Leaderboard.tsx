@@ -4,7 +4,7 @@ import { LeaderboardProps, Score } from '../types.d';
 const Leaderboard = ({ scores }: LeaderboardProps) => {
   const [sortedScores, setSortedScores] = useState<Array<Score>>();
 
-  // Sort scores by time is ascending order
+  // Sort scores by time in ascending order
   useEffect(() => {
     const compareTime = (a: Score, b: Score) => {
       if (a.time < b.time) {
@@ -20,6 +20,7 @@ const Leaderboard = ({ scores }: LeaderboardProps) => {
 
   return (
     <section id="leaderboard">
+      <h1>Top Scores</h1>
       <div className="headers">
         <h2>Rank</h2>
         <h2>Name</h2>
