@@ -16,6 +16,9 @@ const Navbar = ({ loggedIn, username, userId }: UserProps) => {
       {loggedIn && (
         <div className="user-actions">
           {username.length > 0 && <p>Hello, {username.split(' ')[0]}</p>}
+          <a className="home" href="/puzzles">
+            All Puzzles
+          </a>
           <a href="/puzzles/new">New Puzzle</a>
           <a href={`/users/${userId}/puzzles`}>My Puzzles</a>
           <button onClick={() => signOut(auth)}>Logout</button>
