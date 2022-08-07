@@ -8,10 +8,12 @@ import {
   useEffect,
   useRef,
   useState,
+  ReactElement,
 } from 'react';
 import { db } from '../firebase/client';
 import { UserProps, HiddenItem } from '../types.d';
 import ImageSelector from './ImageSelector';
+import SelectionCanvas from './SelectionCanvas';
 
 const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   // Set title in state on user input
@@ -64,27 +66,12 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
 
-  useEffect(() => {
-    const canvases = document.querySelectorAll('canvas');
-    for (let i = 0; i < canvases.length; i++) {
-      const canvas = canvases[0];
-      canvas.width = canvasWidth;
-      canvas.height = canvasHeight;
-    }
-  }, [canvasWidth, canvasHeight]);
-
   const scaleCanvas = (e: SyntheticEvent) => {
     const puzzleImage = e.target as HTMLImageElement;
     const width = puzzleImage.width;
     const height = puzzleImage.height;
     setCanvasWidth(width);
     setCanvasHeight(height);
-  };
-
-  window.onresize = () => {
-    const puzzleImage = document.getElementById('image') as HTMLImageElement;
-    setCanvasWidth(puzzleImage.width);
-    setCanvasHeight(puzzleImage.height);
   };
 
   // Store hidden items in state & set up reference for remove item eventlistener (avoids stale state)
@@ -94,91 +81,39 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
     itemsRef.current = hiddenItems;
   }, [hiddenItems]);
 
-  // Save information about current item to add to hiddenItems
+  // Handle marking of hidden item areas with canvases
   const [description, setDescription] = useState<string>('');
-  const [itemCoords, setItemCoords] = useState<Array<number>>([]);
+  const [itemCoords, setItemCoords] = useState<number[]>([]);
   const [getDesc, setGetDesc] = useState<boolean>(false);
   const [placingRect, setPlacingRect] = useState<boolean>(false);
+  const [canvases, setCanvases] = useState<ReactElement[]>([]);
+
+  const updateCoords = (x1: number, x2: number, y1: number, y2: number) => {
+    setItemCoords([x1, x2, y1, y2]);
+    setPlacingRect(false);
+  };
+
+  const filterItems = (description: string) => {
+    const filteredItems = itemsRef.current.filter(
+      (item) => item.description !== description
+    );
+    setHiddenItems(filteredItems);
+  };
 
   const getItemArea = (description: string) => {
-    // Remove description input & add instructions before drawing
     setGetDesc(false);
     setPlacingRect(true);
-    // NOT VERY REACT - DO THIS WITHOUT DOM MANIPULATION
-    // Create new canvas & set up coord variables for drawing rectangles
-    const board = document.getElementById('board');
-    const canvas = document.createElement('canvas');
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    board?.appendChild(canvas);
-    const rect = canvas.getBoundingClientRect();
-    const ctx = canvas.getContext('2d');
-    let x1 = 0,
-      x2 = 0,
-      y1 = 0,
-      y2 = 0;
-    if (ctx) {
-      ctx.strokeStyle = '#bf4f45';
-      ctx.lineWidth = 2;
-      // Add eventlisteners to click & drag to draw a rectangle
-
-      // Save starting position of rectangle & add event listener for animation
-      const startRect = (e: MouseEvent) => {
-        x1 = (e.clientX - rect.left) / rect.width;
-        y1 = (e.clientY - rect.top) / rect.height;
-        canvas.addEventListener('mousemove', animateRect);
-      };
-
-      // Clear canvas & redraw rectangle to current mouse position
-      const animateRect = (e: MouseEvent) => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        x2 = (e.clientX - rect.left) / rect.width;
-        y2 = (e.clientY - rect.top) / rect.height;
-        // Scale rectangle with canvas dimensions & draw using integers
-        ctx.strokeRect(
-          Math.round(x1 * canvas.width),
-          Math.round(y1 * canvas.height),
-          Math.round(x2 * canvas.width) - Math.round(x1 * canvas.width),
-          Math.round(y2 * canvas.height) - Math.round(y1 * canvas.height)
-        );
-      };
-
-      // Draw final rectangle, clean up eventlisteners, & save coords
-      const endRect = (e: MouseEvent) => {
-        canvas.removeEventListener('mousemove', animateRect);
-        x2 = (e.clientX - rect.left) / rect.width;
-        y2 = (e.clientY - rect.top) / rect.height;
-        ctx.strokeRect(
-          Math.round(x1 * canvas.width),
-          Math.round(y1 * canvas.height),
-          Math.round(x2 * canvas.width) - Math.round(x1 * canvas.width),
-          Math.round(y2 * canvas.height) - Math.round(y1 * canvas.height)
-        );
-        canvas.removeEventListener('mousedown', startRect);
-        canvas.removeEventListener('mouseup', endRect);
-        setItemCoords([x1, x2, y1, y2]);
-        setPlacingRect(false);
-
-        // Create button at start location of rectangle - delete canvas & remove item from state on click
-        const remove = document.createElement('button') as HTMLButtonElement;
-        remove.textContent = 'X';
-        remove.addEventListener('click', () => {
-          board?.removeChild(canvas);
-          board?.removeChild(remove);
-          const filteredItems = itemsRef.current.filter(
-            (item) => item.description !== description
-          );
-          setHiddenItems(filteredItems);
-        });
-        remove.style.position = 'absolute';
-        remove.style.top = (y1 * 100).toString() + '%';
-        remove.style.left = (x1 * 100).toString() + '%';
-        board?.appendChild(remove);
-      };
-      // Start listening for input
-      canvas.addEventListener('mousedown', startRect);
-      canvas.addEventListener('mouseup', endRect);
-    }
+    const newcanvas = (
+      <SelectionCanvas
+        key={description}
+        width={canvasWidth}
+        height={canvasHeight}
+        currDescription={description}
+        updateCoords={updateCoords}
+        filterItems={filterItems}
+      />
+    );
+    setCanvases([...canvases, newcanvas]);
   };
 
   // Add new hidden item to array every time new coords are received from canvas
@@ -281,7 +216,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           imageSrc={imageSrc}
         />
       )}
-      {imageSelected && (
+      {imageSelected && !uploading && !uploaded && (
         <div className="hidden-items">
           <div className="items">
             <h2>Hidden Items</h2>
@@ -330,16 +265,19 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           </div>
           {!uploading && !uploaded && (
             <div id="board" className="board">
+              {canvases.map((canvas) => {
+                return canvas;
+              })}
               <img id="image" src={imageSrc} alt="" onLoad={scaleCanvas} />
             </div>
           )}
-          {uploading && <div className="uploading">Uploading Puzzle</div>}
-          {uploaded && (
-            <div className="uploaded">
-              <p>Puzzle Successfully Uploaded</p>
-              <a href={`/puzzles/${id}`}>Go to puzzle</a>
-            </div>
-          )}
+        </div>
+      )}
+      {uploading && <div className="uploading">Uploading Puzzle</div>}
+      {uploaded && (
+        <div className="uploaded">
+          <p>Puzzle Successfully Uploaded</p>
+          <a href={`/puzzles/${id}`}>Go to puzzle</a>
         </div>
       )}
     </section>
