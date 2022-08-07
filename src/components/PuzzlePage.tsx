@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useState, useEffect, SyntheticEvent } from 'react';
+import { useState, useEffect, useRef, SyntheticEvent, MouseEvent } from 'react';
 import { doc, getDoc, updateDoc, increment } from 'firebase/firestore/lite';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { db } from '../firebase/client';
@@ -10,7 +10,7 @@ import Selector from './Selector';
 const PuzzlePage = ({ username, userId }: FormProps) => {
   const { id } = useParams<string>();
   const [puzzle, setPuzzle] = useState<Puzzle>();
-  const [hiddenItems, setHiddenItems] = useState<Array<HiddenItem>>([]);
+  const [hiddenItems, setHiddenItems] = useState<HiddenItem[]>([]);
 
   // Get puzzle from firestore & image URL from storage before setting state
 
@@ -62,12 +62,6 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
     setGameStart(true);
   };
 
-  window.onresize = () => {
-    const puzzleImage = document.getElementById('image') as HTMLImageElement;
-    setCanvasWidth(puzzleImage.width);
-    setCanvasHeight(puzzleImage.height);
-  };
-
   // Start game & timer after getting hidden items from puzzle, stop when all items are found
   const [timer, setTimer] = useState<number>(0);
   const [gameStart, setGameStart] = useState<boolean>(false);
@@ -87,14 +81,17 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
   const [x, setX] = useState<number>(0);
   const [y, setY] = useState<number>(0);
 
-  const displaySelector = (e: any) => {
-    let element = document.getElementById('canvas') as HTMLCanvasElement;
-    const canvas = element.getBoundingClientRect();
-    let x = (e.clientX - canvas.left) / canvas.width;
-    let y = (e.clientY - canvas.top) / canvas.height;
-    setX(Number(x));
-    setY(Number(y));
-    setSelector(!selector);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const displaySelector = (e: MouseEvent) => {
+    const canvas = canvasRef.current?.getBoundingClientRect();
+    if (canvas) {
+      let x = (e.clientX - canvas.left) / canvas.width;
+      let y = (e.clientY - canvas.top) / canvas.height;
+      setX(Number(x));
+      setY(Number(y));
+      setSelector(!selector);
+    }
   };
 
   // If x & y from mouse event are within item's coordinates, remove it from hiddenItems & mark it off list
@@ -108,10 +105,6 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
             );
             setHiddenItems(filteredItems);
             setSelector(!selector);
-            const itemEl = document.getElementById(
-              item.description
-            ) as HTMLElement;
-            itemEl.classList.add('found');
           }
         } else {
           console.log('Try again!');
@@ -134,6 +127,7 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
                 <li
                   id={item.description}
                   key={puzzle.hiddenItems.indexOf(item)}
+                  className={hiddenItems.includes(item) ? '' : 'found'}
                 >
                   {puzzle.hiddenItems.indexOf(item) + 1}. {item.description}
                 </li>
@@ -155,6 +149,7 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
             <img id="image" src={imageSrc} alt="" onLoad={scaleCanvas} />
           )}
           <canvas
+            ref={canvasRef}
             id="canvas"
             width={canvasWidth}
             height={canvasHeight}
