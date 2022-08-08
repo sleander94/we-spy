@@ -7,8 +7,12 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
-exports.generateThumbnail = functions.storage
-  .object()
+exports.generateThumbnail = functions
+  .runWith({
+    timeoutSeconds: 300,
+    memory: '1GB',
+  })
+  .storage.object()
   .onFinalize(async (object: any) => {
     const fileBucket = object.bucket;
     const filePath = object.name;
