@@ -24,7 +24,7 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
       try {
         const results = await getDoc(doc(db, 'puzzles', `${id}`));
         let data = results.data() as Puzzle;
-        const url = await getDownloadURL(ref(storage, data.image));
+        const url = await getDownloadURL(ref(storage, `puzzles/${data.image}`));
         data.image = url;
 
         setPuzzle(data);
