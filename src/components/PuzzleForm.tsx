@@ -28,7 +28,6 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   // Get image file information from input element & save it in state
   const [imageSrc, setImageSrc] = useState<string>('');
   const [imageFile, setImageFile] = useState<Blob>();
-  const [imageName, setImageName] = useState<string>('');
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
   const loadImage = (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +41,6 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           if (typeof reader.result == 'string') {
             setImageSrc(reader.result);
             setImageFile(file);
-            setImageName(file.name);
             setImageLoaded(true);
           }
         },
@@ -155,19 +153,19 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
     e.preventDefault();
     const storage = getStorage();
 
-    // Upload image file to firebase storage
     if (imageFile) {
+      // Generate id & date for puzzle
+      const newId = uuidv4();
+      setId(newId);
+      const newDate = new Date();
+
+      // Upload image file to firebase storage
       setUploading(true);
-      const imageRef = ref(storage, `puzzles/${imageName}`);
+      const imageRef = ref(storage, `puzzles/${newId}`);
       try {
         await uploadBytes(imageRef, imageFile).then(() => {
           console.log('Uploaded image');
         });
-
-        // Generate id & date for puzzle
-        const newId = uuidv4();
-        setId(newId);
-        const newDate = new Date();
 
         // Upload puzzle document to firestore
         await setDoc(doc(db, 'puzzles', newId), {
@@ -175,7 +173,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           authorId: userId,
           title: title,
           timestamp: newDate,
-          image: `puzzles/${imageName}`,
+          image: `puzzles/${newId}`,
           hiddenItems: hiddenItems,
           likes: [],
           views: 0,
@@ -186,7 +184,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           author: username,
           title: title,
           timestamp: newDate,
-          image: `puzzles/${imageName}`,
+          image: `puzzles/${newId}`,
           scores: [],
         });
 
