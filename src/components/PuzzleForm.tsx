@@ -57,6 +57,8 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   const validateTitleForm = () => {
     if (title.length == 0) setError('Enter a title.');
     else if (imageSrc.length == 0) setError('Select an image.');
+    else if (!imageFile?.type.startsWith('image/'))
+      setError('File needs to be an image (jpg, png, svg, etc.)');
     else setImageSelected(true);
   };
 
@@ -173,7 +175,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           authorId: userId,
           title: title,
           timestamp: newDate,
-          image: `puzzles/${newId}`,
+          image: `${newId}`,
           hiddenItems: hiddenItems,
           likes: [],
           views: 0,
@@ -184,7 +186,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           author: username,
           title: title,
           timestamp: newDate,
-          image: `puzzles/${newId}`,
+          image: `${newId}`,
           scores: [],
         });
 
