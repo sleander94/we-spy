@@ -40,7 +40,9 @@ const UserPuzzles = ({ username, userId, loggedIn }: UserProps) => {
             data.push(info as Puzzle);
           });
           for (const puzzle of data) {
-            const url = await getDownloadURL(ref(storage, puzzle.image));
+            const url = await getDownloadURL(
+              ref(storage, `puzzles/thumb_${puzzle.image}`)
+            );
             puzzle.image = url;
           }
           setPuzzles(data);
@@ -53,15 +55,25 @@ const UserPuzzles = ({ username, userId, loggedIn }: UserProps) => {
     getPuzzles();
   }, [userId]);
 
-  // Delete puzzle, leaderboard, and puzzle image from firebase
+  // Delete puzzle, leaderboard, and puzzle image, and thumbnail from firebase
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [delId, setDelId] = useState<string>('');
+
+  const getDelConfirmation = (id: string, image: string) => {
+    setDelId(id);
+    setConfirmDelete(true);
+  };
+
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  const deletePuzzle = async (id: string, image: string) => {
+  const deletePuzzle = async () => {
     try {
+      setConfirmDelete(false);
       setIsDeleting(true);
-      await deleteDoc(doc(db, 'puzzles', id));
-      await deleteDoc(doc(db, 'leaderboards', id));
-      await deleteObject(ref(storage, image));
+      await deleteDoc(doc(db, 'puzzles', delId));
+      await deleteDoc(doc(db, 'leaderboards', delId));
+      await deleteObject(ref(storage, `puzzles/${delId}`));
+      await deleteObject(ref(storage, `puzzles/thumb_${delId}`));
       window.location.reload();
     } catch (err) {
       console.error(err);
@@ -71,40 +83,63 @@ const UserPuzzles = ({ username, userId, loggedIn }: UserProps) => {
   return (
     <section id="user-puzzles">
       {loggedIn && (
-        <div id="puzzle-container">
-          <h1>My Puzzles</h1>
+        <div id="page-container">
           {loading && (
             <div className="loading-container">
               <div className="animation">Loading My Puzzles...</div>
             </div>
           )}
           {isDeleting && (
-            <div className="deleting-container">
+            <div className="loading-container">
               <div className="animation">Deleting Puzzle...</div>
             </div>
           )}
-          {!loading && (
-            <div className="puzzle-grid">
-              {puzzles.map((puzzle: Puzzle) => {
-                return (
-                  <div key={puzzle.id} className="user-puzzle">
-                    <PuzzleCard
-                      id={puzzle.id}
-                      title={puzzle.title}
-                      author={puzzle.author}
-                      image={puzzle.image}
-                      timestamp={puzzle.timestamp}
-                      likes={puzzle.likes}
-                      views={puzzle.views}
-                    />
-                    <button
-                      onClick={() => deletePuzzle(puzzle.id, puzzle.image)}
-                    >
-                      Delete Puzzle
-                    </button>
-                  </div>
-                );
-              })}
+          {confirmDelete && (
+            <div className="deleting-container">
+              <div className="confirm-delete">
+                <p>Are you sure you want to permantely delete this puzzle?</p>
+                <div className="delete-buttons">
+                  <button
+                    className="cancel"
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button className="delete" onClick={() => deletePuzzle()}>
+                    Confirm Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {!loading && !isDeleting && (
+            <div id="puzzle-container">
+              <h1>My Puzzles</h1>
+              <div className="puzzle-grid">
+                {puzzles.map((puzzle: Puzzle) => {
+                  return (
+                    <div key={puzzle.id} className="user-puzzle">
+                      <PuzzleCard
+                        id={puzzle.id}
+                        title={puzzle.title}
+                        author={puzzle.author}
+                        image={puzzle.image}
+                        timestamp={puzzle.timestamp}
+                        likes={puzzle.likes}
+                        views={puzzle.views}
+                      />
+                      <button
+                        className="delete-puzzle"
+                        onClick={() =>
+                          getDelConfirmation(puzzle.id, puzzle.image)
+                        }
+                      >
+                        Delete Puzzle
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

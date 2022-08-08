@@ -17,7 +17,9 @@ const LeaderboardPage = () => {
       try {
         const results = await getDoc(doc(db, 'leaderboards', `${id}`));
         let data = results.data() as LeaderboardData;
-        const url = await getDownloadURL(ref(storage, data.image));
+        const url = await getDownloadURL(
+          ref(storage, `puzzles/thumb_${data.image}`)
+        );
         data.image = url;
         setLeaderboard(data);
       } catch (err) {

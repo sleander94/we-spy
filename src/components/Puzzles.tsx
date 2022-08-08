@@ -18,14 +18,16 @@ const Puzzles = () => {
         const results = await getDocs(
           query(collection(db, 'puzzles'), orderBy('views', 'desc'))
         );
-        let data: Array<Puzzle> = [];
+        let data: Puzzle[] = [];
         results.forEach((puzzle) => {
           let info = puzzle.data();
           info.id = puzzle.id;
           data.push(info as Puzzle);
         });
         for (const puzzle of data) {
-          const url = await getDownloadURL(ref(storage, puzzle.image));
+          const url = await getDownloadURL(
+            ref(storage, `puzzles/thumb_${puzzle.image}`)
+          );
           puzzle.image = url;
         }
         setPuzzles(data);
@@ -43,14 +45,16 @@ const Puzzles = () => {
       const results = await getDocs(
         query(collection(db, 'puzzles'), orderBy(order, 'desc'))
       );
-      let data: Array<Puzzle> = [];
+      let data: Puzzle[] = [];
       results.forEach((puzzle) => {
         let info = puzzle.data();
         info.id = puzzle.id;
         data.push(info as Puzzle);
       });
       for (const puzzle of data) {
-        const url = await getDownloadURL(ref(storage, puzzle.image));
+        const url = await getDownloadURL(
+          ref(storage, `puzzles/thumb_${puzzle.image}`)
+        );
         puzzle.image = url;
       }
       setPuzzles(data);
@@ -62,32 +66,34 @@ const Puzzles = () => {
 
   return (
     <section id="puzzles">
-      <h1>Puzzles</h1>
-      <div className="sort-buttons">
-        <button onClick={() => sortPuzzles('views')}>Most Viewed</button>
-        <button onClick={() => sortPuzzles('timestamp')}>Recent</button>
-      </div>
       {loading && (
         <div className="loading-container">
           <div className="animation">Loading Puzzles...</div>
         </div>
       )}
       {!loading && (
-        <div className="puzzle-grid">
-          {puzzles.map((puzzle: Puzzle) => {
-            return (
-              <PuzzleCard
-                key={puzzle.id}
-                id={puzzle.id}
-                title={puzzle.title}
-                author={puzzle.author}
-                image={puzzle.image}
-                timestamp={puzzle.timestamp}
-                likes={puzzle.likes}
-                views={puzzle.views}
-              />
-            );
-          })}
+        <div id="puzzle-container">
+          <h1>Puzzles</h1>
+          <div className="sort-buttons">
+            <button onClick={() => sortPuzzles('views')}>Most Viewed</button>
+            <button onClick={() => sortPuzzles('timestamp')}>Recent</button>
+          </div>
+          <div className="puzzle-grid">
+            {puzzles.map((puzzle: Puzzle) => {
+              return (
+                <PuzzleCard
+                  key={puzzle.id}
+                  id={puzzle.id}
+                  title={puzzle.title}
+                  author={puzzle.author}
+                  image={puzzle.image}
+                  timestamp={puzzle.timestamp}
+                  likes={puzzle.likes}
+                  views={puzzle.views}
+                />
+              );
+            })}
+          </div>
         </div>
       )}
     </section>
