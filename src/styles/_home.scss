@@ -10,9 +10,11 @@
     color: $medium-red;
     font-size: 3rem;
     margin-bottom: -4rem;
+    font-weight: normal;
   }
   h2 {
     color: $medium-red;
+    font-weight: normal;
   }
   div {
     display: flex;
@@ -28,10 +30,9 @@
       font-size: 1.3rem;
     }
   }
-  div:last-child {
-    border-bottom: none;
-  }
   img {
+    width: 100%;
+    min-width: 300px;
     max-width: 600px;
     border: 2px solid $medium-red;
     box-shadow: 0 0 15px $light;
@@ -56,5 +57,27 @@
   a:hover {
     color: $dark;
     background-color: $soft-red;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  #home {
+    width: 100vw;
+    gap: 2rem;
+    h1 {
+      margin-bottom: 0;
+    }
+    .right-instruction {
+      flex-direction: column;
+      img {
+        transform: perspective(0px) rotateY(0deg);
+      }
+    }
+    .left-instruction {
+      flex-direction: column-reverse;
+      img {
+        transform: perspective(0px) rotateY(0deg);
+      }
+    }
   }
 }
