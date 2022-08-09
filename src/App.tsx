@@ -15,8 +15,8 @@ import LeaderboardPage from './components/LeaderboardPage';
 import UserPuzzles from './components/UserPuzzles';
 import LoginPrompt from './components/LoginPrompt';
 import Footer from './components/Footer';
+import Home from './components/Home';
 import './styles/main.css';
-import SelectionCanvas from './components/SelectionCanvas';
 
 const App = () => {
   const [username, setUsername] = useState<string>('');
@@ -42,7 +42,8 @@ const App = () => {
       {!loggedIn && <LoginPrompt />}
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate to="/puzzles" />} />
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/puzzles" element={<Puzzles />} />
           <Route
             path="/puzzles/:id"
