@@ -68,7 +68,9 @@ const Puzzles = () => {
     <section id="puzzles">
       {loading && (
         <div className="loading-container">
-          <div className="animation">Loading Puzzles...</div>
+          <div className="rect1"></div>
+          <div className="rect2"></div>
+          <div className="rect3"></div>
         </div>
       )}
       {!loading && (

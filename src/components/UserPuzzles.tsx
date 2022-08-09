@@ -86,12 +86,16 @@ const UserPuzzles = ({ username, userId, loggedIn }: UserProps) => {
         <div id="page-container">
           {loading && (
             <div className="loading-container">
-              <div className="animation">Loading My Puzzles...</div>
+              <div className="rect1"></div>
+              <div className="rect2"></div>
+              <div className="rect3"></div>
             </div>
           )}
           {isDeleting && (
             <div className="loading-container">
-              <div className="animation">Deleting Puzzle...</div>
+              <div className="rect1"></div>
+              <div className="rect2"></div>
+              <div className="rect3"></div>
             </div>
           )}
           {confirmDelete && (

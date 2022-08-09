@@ -273,7 +273,13 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           )}
         </div>
       )}
-      {uploading && <div className="uploading">Uploading Puzzle</div>}
+      {uploading && (
+        <div className="uploading">
+          <div className="rect1"></div>
+          <div className="rect2"></div>
+          <div className="rect3"></div>
+        </div>
+      )}
       {uploaded && (
         <div className="uploaded">
           <p>Puzzle Successfully Uploaded</p>
