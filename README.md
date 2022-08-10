@@ -1,7 +1,11 @@
 # We Spy Photo Hunts
 
 <p align="left" width="100%">
-    <img width="60%" src="/public/images/wespydesktop.png" alt="desktop demo gif">
+    <img width="60%" src="/public/images/wespydesktop.png" alt="desktop preview">
+</p>
+<hr>
+<p align="left" width="100%">
+    <img width="60%" src="https://media.giphy.com/media/Ih5s3O0kN5bu5momtc/giphy.gif" alt="desktop preview gif">
 </p>
 
 ## Live site: [wespy.app](https://wespy.app) 👈
