@@ -1,89 +1,40 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-c66648af7eb3fe8bc4f294546bfd86ef473780cde1dea487d3c4ff354943c9ae.svg)](https://classroom.github.com/online_ide?assignment_repo_id=8163011&assignment_repo_type=AssignmentRepo)
-# React Solo Project
+# We Spy Photo Hunts
 
-## Requirements
+<p align="left" width="100%">
+    <img width="60%" src="/public/images/wespydesktop.png" alt="desktop demo gif">
+</p>
 
-- `React.js 18`
-- `Node.js ^16.10 || 18`. Need to change your version?
-  - [Window](https://github.com/coreybutler/nvm-windows)
-  - [Mac](https://github.com/tj/n)
-- Firebase (optional, but strongly encouraged for your database, auth, hosting, and storage needs).
-- Hosting: if not Firebase, it must be an pre-approved PaaS
-  - Vercel
-  - Heroku
-  - Railway
+## Live site: [wespy.app](https://wespy.app) 👈
 
-## Getting Started
+Create and play custom photo hunt puzzles.
 
-We are using "yarn" instead of "npm" in this project.
+## Features
 
-1. Install yarn. `npm install -g yarn`
-2. Install all node modules. `yarn install`
-3. Boot up the server. `yarn start`
+- Upload an image and view a preview before creating a puzzle
+- Add hidden items to your puzzle by selecting their areas using animated canvases
+- View and delete your own puzzles
+- Sort all puzzles by most viewed and recent
+- Play a puzzle and upload your time to the leaderboard
+- Firebase handles auth, database, and image storage
+- Firebase cloud function generates image thumbnail on puzzle creation
 
-### Hosting (Not necessary in sprint 1)
+## Technologies Used
 
-1. Go to the official Firebase website and set up a project.
-2. Enable Firebase Hosting by going into the hosting section under Build dropdown.
-3. Inside your repo run the following commands (one at a time):
-4. `npm install -g firebase-tools`
-5. `firebase login`
-6. `firebase init`
-7. `yarn build` (*remember to always build before deploying your code to production*).
-8. `firebase deploy`
-9. If you run into trouble take a look at: https://www.geeksforgeeks.org/how-to-deploy-react-project-on-firebase/
+- React
+- Typescript
+- Firebase
+- Sass
 
-### Firebase (if you need authentication or a database in your project)
+## To Do
 
-1. If you don't need authentication or a db, you can ignore the 'login', 'firebase' and 'authSlice' files and skip this section.
-2. Go to the official Firebase website and set up a project.
-3. Enable Firebase Firestore if you need a database or Firestore Authentication if you need user authentication.
-4. If you need user authentication, make sure to enable google authentication in the settings.
-5. If you used `yarn` to install all dependencies, you shouldn't need to install anything else.
-6. Change the name of the '.env.local.example' file to '.env.local' and write your api key and other information (can be found in the settings of your project on the firebase website).
-7. The 'Login' component is commented out in 'App.js'. If you don't need it, delete it. If you do need it, move it to the page where you need it.
-8. You can import the 'Login' component on the page you want the user to log in. At the moment the logic is set up to support authorization with Google. If you want to add others (email, username and password, github) You will have to implement this on your own.
-9. Clicking on the "Continue with Google" button should open a pop-up that logs you in. If this doesn't work, check your firebase keys and if you have google authentication enabled. Once you are logged in, it will automatically update the state in the 'authSlice' reducer with your information (display name, email and access token). If you need any of these, you can get them with a useSelector hook in the component where you need them.
-10. You can check if the user is signed in by checking the state of the 'authSlice'. If user is false (empty), the user isn't signed in.
-11. You are free to style the buttons or the login component as you see fit. You can (probably a good idea) move the log out button somewhere else, depending on your project. as long as you import all the necessary things and don't change the function/logic, it should work.
+- Like and comment on puzzles
+- Share puzzle with auto generated link
+- Animations for finding items and starting puzzles
+- Edit your puzzles
+- Search puzzles
 
-### Folder Structure And Advice
+## Author
 
-1. You can adjust the folder structure if you have other preferances.
-2. The "redux" folder contains an example reducer (counter). You can delete this.
-3. You can use whichever CSS library you wish, or just plain CSS/SASS (preferably modules).
-4. You may modify the boilerplate (e.g. delete dummy text in App.js, the counter, the the logo.svg, etc.)
-5. V1 of this project is due in 3 weeks. Remeber to KISS (Keep It Simple, Stupid). You need to think of v1 as a conceptual boundary of constraints; anything *outside those boundaries must be saved for a future version*.
+Stephen Leander
 
-<!---
-*** WHEN YOU ARE UP AND RUNNING, DELETE EVERYTHING ABOVE ME EXCEPT THE VERY TOP LINE. ***
-*** RENAME THE TOP LINE WITH YOUR PROJECT NAME. ***
--->
-
-## Sprint Progress
-
-Go to the [milestones tab](../../milestone/1) to track your progress.
-
-## Project Overview
-
-### Description
-
-My project is a site where users can create their own photo hunt games (think iSpy or Where's Waldo) and share them with the community. 
-
-Features planned for V1:
-- Create a puzzle from an uploaded image
-- Play a puzzle & save your score to the leaderboards
-- Delete your own puzzles
-
-Planned, nice to have features:
-- Like, comment, and share puzzles
-- Search and sort all puzzles
-
-
-### Mockups
-
-*View `README.md` to see how to replace me with mockups.*
-
-| ![Homepage](/mockups/wespymockup1.jpg) | 
-| ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![Puzzle Page](/mockups/wespymockup2.jpg)
+[stephenleander.dev](https://stephenleander.dev)
