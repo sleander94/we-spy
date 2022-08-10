@@ -18,6 +18,7 @@
     color: $light;
     h1 {
       color: $medium-red;
+      font-weight: normal;
     }
   }
   .user-actions {
@@ -45,13 +46,12 @@
 
 @media only screen and (max-width: 900px) {
   #nav {
-    height: 60px;
     gap: 0;
     .user-actions {
       padding: 0;
       gap: 8px;
       p,
-      .home {
+      .new {
         display: none;
       }
       button,
