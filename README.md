@@ -1,5 +1,8 @@
 # We Spy Photo Hunts
 
+## Live site: [wespy.app](https://wespy.app) 
+
+
 <p align="left" width="100%">
     <img width="60%" src="/public/images/wespydesktop.png" alt="desktop preview">
 </p>
@@ -7,8 +10,6 @@
 <p align="left" width="100%">
     <img width="60%" src="https://media.giphy.com/media/Ih5s3O0kN5bu5momtc/giphy.gif" alt="desktop preview gif">
 </p>
-
-## Live site: [wespy.app](https://wespy.app) 👈
 
 Create and play custom photo hunt puzzles.
 
