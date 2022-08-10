@@ -5,7 +5,7 @@ import { UserProps } from '../types.d';
 const Navbar = ({ loggedIn, username, userId }: UserProps) => {
   return (
     <nav id="nav">
-      <a className="title" href="/puzzles">
+      <a className="title" href="/home">
         <h1>We Spy</h1>
       </a>
       {!loggedIn && (
@@ -16,10 +16,12 @@ const Navbar = ({ loggedIn, username, userId }: UserProps) => {
       {loggedIn && (
         <div className="user-actions">
           {username.length > 0 && <p>Hello, {username.split(' ')[0]}</p>}
-          <a className="home" href="/puzzles">
+          <a className="puzzles" href="/puzzles">
             All Puzzles
           </a>
-          <a href="/puzzles/new">New Puzzle</a>
+          <a className="new" href="/puzzles/new">
+            New Puzzle
+          </a>
           <a href={`/users/${userId}/puzzles`}>My Puzzles</a>
           <button onClick={() => signOut(auth)}>Logout</button>
         </div>
