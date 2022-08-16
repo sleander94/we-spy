@@ -90,6 +90,11 @@ code {
   gap: 1rem;
 }
 
+#user-puzzles #login-prompt {
+  color: #f2bc8d;
+  text-align: center;
+  margin-top: 20rem;
+}
 #user-puzzles #page-container {
   text-align: center;
   padding: 1rem;
