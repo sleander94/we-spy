@@ -367,6 +367,7 @@ code {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  margin-top: 20rem;
 }
 #puzzle-form .uploading * {
   background-color: #f2bc8d;
@@ -897,7 +898,6 @@ code {
   padding: 1rem;
   width: 100%;
   color: #f2bc8d;
-  font-weight: bold;
 }
 #footer img,
 #footer a {
