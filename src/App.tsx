@@ -38,9 +38,9 @@ const App = () => {
 
   return (
     <div className="App">
-      <Navbar loggedIn={loggedIn} username={username} userId={userId} />
       {!loggedIn && <LoginPrompt />}
       <Router>
+        <Navbar loggedIn={loggedIn} username={username} userId={userId} />
         <Routes>
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/home" element={<Home />} />
