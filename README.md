@@ -37,6 +37,7 @@ Create and play custom photo hunt puzzles.
 - Animations for finding items and starting puzzles
 - Edit your puzzles
 - Search puzzles
+- Implement adult image detection filter
 
 ## Author
 
