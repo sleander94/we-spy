@@ -15,6 +15,9 @@ import { UserProps, HiddenItem } from '../types.d';
 import ImageSelector from './ImageSelector';
 import SelectionCanvas from './SelectionCanvas';
 
+const deepai = require('deepai'); // OR include deepai.min.js as a script tag in your HTML
+deepai.setApiKey(process.env.REACT_APP_DEEPAI_KEY);
+
 const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   // Set title in state on user input
   const [title, setTitle] = useState<string>('');
@@ -30,7 +33,9 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   const [imageFile, setImageFile] = useState<Blob>();
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
-  const loadImage = (e: ChangeEvent<HTMLInputElement>) => {
+  const [adultContent, setAdultContent] = useState<boolean>(true);
+
+  const loadImage = async (e: ChangeEvent<HTMLInputElement>) => {
     const imageInput = e.target as HTMLInputElement;
     if (imageInput.files) {
       const file = imageInput.files[0];
@@ -47,6 +52,12 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
         false
       );
       if (file) reader.readAsDataURL(file);
+
+      const response = await deepai.callStandardApi('content-moderation', {
+        image: document.getElementById('image'),
+      });
+
+      if (response.output.nsfw_score > 0) setAdultContent(true);
     }
   };
 
@@ -59,6 +70,8 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
     else if (imageSrc.length == 0) setError('Select an image.');
     else if (!imageFile?.type.startsWith('image/'))
       setError('File needs to be an image (jpg, png, svg, etc.)');
+    else if (adultContent)
+      setError('Adult content detected. Please select an appropriate image.');
     else setImageSelected(true);
   };
 
