@@ -33,9 +33,10 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   const [imageFile, setImageFile] = useState<Blob>();
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
-  const [adultContent, setAdultContent] = useState<boolean>(true);
+  const [adultContent, setAdultContent] = useState<boolean>(false);
 
   const loadImage = async (e: ChangeEvent<HTMLInputElement>) => {
+    setImageLoaded(false);
     const imageInput = e.target as HTMLInputElement;
     if (imageInput.files) {
       const file = imageInput.files[0];
@@ -46,18 +47,23 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           if (typeof reader.result == 'string') {
             setImageSrc(reader.result);
             setImageFile(file);
-            setImageLoaded(true);
           }
         },
         false
       );
       if (file) reader.readAsDataURL(file);
 
-      const response = await deepai.callStandardApi('content-moderation', {
-        image: document.getElementById('image'),
-      });
-
-      if (response.output.nsfw_score > 0) setAdultContent(true);
+      try {
+        const response = await deepai.callStandardApi('content-moderation', {
+          image: document.getElementById('image'),
+        });
+        response.output.nsfw_score > 0.25
+          ? setAdultContent(true)
+          : setAdultContent(false);
+        setImageLoaded(true);
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -66,13 +72,19 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
   const [error, setError] = useState<string>('');
 
   const validateTitleForm = () => {
-    if (title.length == 0) setError('Enter a title.');
-    else if (imageSrc.length == 0) setError('Select an image.');
-    else if (!imageFile?.type.startsWith('image/'))
-      setError('File needs to be an image (jpg, png, svg, etc.)');
-    else if (adultContent)
-      setError('Adult content detected. Please select an appropriate image.');
-    else setImageSelected(true);
+    if (imageLoaded) {
+      if (title.length == 0) setError('Enter a title.');
+      else if (imageSrc.length == 0) setError('Select an image.');
+      else if (!imageFile?.type.startsWith('image/'))
+        setError('File needs to be an image (jpg, png, svg, etc.)');
+      else if (adultContent)
+        setError('Adult content detected. Please select an appropriate image.');
+      else setImageSelected(true);
+    } else {
+      setError(
+        'No image detected, please select an image or try again in a second.'
+      );
+    }
   };
 
   // Get width & height of image & set canvas dimensions (run on image load)
