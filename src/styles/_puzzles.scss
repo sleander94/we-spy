@@ -1,11 +1,18 @@
 #puzzles {
+  display: grid;
+  grid: 3rem 1fr 2rem / 1fr;
+  text-align: center;
+  h1 {
+    color: $medium-red;
+    text-decoration: underline;
+    padding: 1rem;
+  }
   .loading-container {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-top: 20rem;
     * {
       background-color: $light;
       width: 20px;
@@ -25,25 +32,27 @@
     }
   }
   #puzzle-container {
-    text-align: center;
     padding: 1rem;
     color: $light;
     display: grid;
     justify-items: center;
-    grid: 2rem 1fr / 1fr;
+    grid: 2rem 1fr 2rem / 1fr;
     gap: 1rem;
-    h1 {
-      color: $medium-red;
-      text-decoration: underline;
+    button:hover {
+      background-color: $soft-red;
+      color: $dark;
     }
     .sort-buttons {
+      align-self: start;
       display: flex;
       gap: 1rem;
       button {
+        width: 90px;
         padding: 4px 16px;
+        font-size: 1.1rem;
       }
-      button:hover {
-        background-color: $soft-red;
+      .active {
+        background-color: $medium-red;
         color: $dark;
       }
     }
@@ -54,6 +63,18 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 1rem;
+    }
+    .page-container {
+      width: 100%;
+      align-self: bottom;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      gap: 1rem;
+      button {
+        width: 72px;
+      }
     }
   }
 }
