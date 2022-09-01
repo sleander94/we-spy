@@ -6,6 +6,8 @@ import {
   query,
   where,
   deleteDoc,
+  updateDoc,
+  increment,
 } from 'firebase/firestore/lite';
 import {
   getStorage,
@@ -74,6 +76,9 @@ const UserPuzzles = ({ username, userId, loggedIn }: UserProps) => {
       await deleteDoc(doc(db, 'leaderboards', delId));
       await deleteObject(ref(storage, `puzzles/${delId}`));
       await deleteObject(ref(storage, `puzzles/thumb_${delId}`));
+      await updateDoc(doc(db, 'puzzle-total', 'total'), {
+        count: increment(-1),
+      });
       window.location.reload();
     } catch (err) {
       console.error(err);
