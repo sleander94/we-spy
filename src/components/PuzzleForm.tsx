@@ -1,4 +1,4 @@
-import { doc, setDoc } from 'firebase/firestore/lite';
+import { doc, increment, setDoc, updateDoc } from 'firebase/firestore/lite';
 import { ref, getStorage, uploadBytes } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -15,7 +15,7 @@ import { UserProps, HiddenItem } from '../types.d';
 import ImageSelector from './ImageSelector';
 import SelectionCanvas from './SelectionCanvas';
 
-const deepai = require('deepai'); // OR include deepai.min.js as a script tag in your HTML
+const deepai = require('deepai');
 deepai.setApiKey(process.env.REACT_APP_DEEPAI_KEY);
 
 const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
@@ -53,6 +53,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
       );
       if (file) reader.readAsDataURL(file);
 
+      // Check if deepai flags image as adult content
       try {
         const response = await deepai.callStandardApi('content-moderation', {
           image: document.getElementById('image'),
@@ -213,6 +214,11 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
           timestamp: newDate,
           image: `${newId}`,
           scores: [],
+        });
+
+        // Increment puzzle count
+        await updateDoc(doc(db, 'puzzle-total', 'total'), {
+          count: increment(1),
         });
 
         setUploading(false);
