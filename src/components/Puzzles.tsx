@@ -16,6 +16,7 @@ import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { db } from '../firebase/client';
 import { Puzzle } from '../types.d';
 import PuzzleCard from './PuzzleCard';
+import Loading from './Loading';
 
 const Puzzles = () => {
   const [puzzles, setPuzzles] = useState<Puzzle[]>([]);
@@ -98,13 +99,7 @@ const Puzzles = () => {
   return (
     <section id="puzzles">
       <h1>All Puzzles</h1>
-      {loading && (
-        <div className="loading-container">
-          <div className="rect1"></div>
-          <div className="rect2"></div>
-          <div className="rect3"></div>
-        </div>
-      )}
+      {loading && <Loading />}
       {!loading && (
         <div id="puzzle-container">
           <div className="sort-buttons">

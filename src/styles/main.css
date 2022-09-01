@@ -42,30 +42,6 @@ code {
   text-decoration: underline;
   padding: 1rem;
 }
-#puzzles .loading-container {
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-#puzzles .loading-container * {
-  background-color: #f2bc8d;
-  width: 20px;
-  height: 1px;
-}
-#puzzles .loading-container .rect1 {
-  -webkit-animation: expand 1s ease-in-out 0s infinite, shimmer 0.5s alternate 0s infinite;
-          animation: expand 1s ease-in-out 0s infinite, shimmer 0.5s alternate 0s infinite;
-}
-#puzzles .loading-container .rect2 {
-  -webkit-animation: expand 1s ease-in-out 0.1s infinite, shimmer 0.5s alternate 0.1s infinite;
-          animation: expand 1s ease-in-out 0.1s infinite, shimmer 0.5s alternate 0.1s infinite;
-}
-#puzzles .loading-container .rect3 {
-  -webkit-animation: expand 1s ease-in-out 0.2s infinite, shimmer 0.5s alternate 0.2s infinite;
-          animation: expand 1s ease-in-out 0.2s infinite, shimmer 0.5s alternate 0.2s infinite;
-}
 #puzzles #puzzle-container {
   padding: 1rem;
   color: #f2bc8d;
@@ -197,32 +173,6 @@ code {
 #user-puzzles #page-container .deleting-container .confirm-delete .delete-buttons button:hover {
   background-color: #f28066;
   color: #2a3340;
-}
-#user-puzzles #page-container .loading-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-#user-puzzles #page-container .loading-container * {
-  background-color: #f2bc8d;
-  width: 20px;
-  height: 1px;
-}
-#user-puzzles #page-container .loading-container .rect1,
-#user-puzzles #page-container .deleting-container .rect1 {
-  -webkit-animation: expand 1s ease-in-out 0s infinite, shimmer 0.5s alternate 0s infinite;
-          animation: expand 1s ease-in-out 0s infinite, shimmer 0.5s alternate 0s infinite;
-}
-#user-puzzles #page-container .loading-container .rect2,
-#user-puzzles #page-container .deleting-container .rect2 {
-  -webkit-animation: expand 1s ease-in-out 0.1s infinite, shimmer 0.5s alternate 0.1s infinite;
-          animation: expand 1s ease-in-out 0.1s infinite, shimmer 0.5s alternate 0.1s infinite;
-}
-#user-puzzles #page-container .loading-container .rect3,
-#user-puzzles #page-container .deleting-container .rect3 {
-  -webkit-animation: expand 1s ease-in-out 0.2s infinite, shimmer 0.5s alternate 0.2s infinite;
-          animation: expand 1s ease-in-out 0.2s infinite, shimmer 0.5s alternate 0.2s infinite;
 }
 
 @media only screen and (max-width: 640px) {
@@ -1038,6 +988,31 @@ code {
     transform: perspective(0px) rotateY(0deg);
   }
 }
+.loading-container {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.loading-container * {
+  background-color: #f2bc8d;
+  width: 20px;
+  height: 1px;
+}
+.loading-container .rect1 {
+  -webkit-animation: expand 1s ease-in-out 0s infinite, shimmer 0.5s alternate 0s infinite;
+          animation: expand 1s ease-in-out 0s infinite, shimmer 0.5s alternate 0s infinite;
+}
+.loading-container .rect2 {
+  -webkit-animation: expand 1s ease-in-out 0.1s infinite, shimmer 0.5s alternate 0.1s infinite;
+          animation: expand 1s ease-in-out 0.1s infinite, shimmer 0.5s alternate 0.1s infinite;
+}
+.loading-container .rect3 {
+  -webkit-animation: expand 1s ease-in-out 0.2s infinite, shimmer 0.5s alternate 0.2s infinite;
+          animation: expand 1s ease-in-out 0.2s infinite, shimmer 0.5s alternate 0.2s infinite;
+}
+
 @-webkit-keyframes shimmer {
   from {
     background-color: #f28066;
@@ -1046,6 +1021,7 @@ code {
     background-color: #bf4f45;
   }
 }
+
 @keyframes shimmer {
   from {
     background-color: #f28066;

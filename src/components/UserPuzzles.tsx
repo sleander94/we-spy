@@ -18,6 +18,7 @@ import {
 import { db } from '../firebase/client';
 import { Puzzle } from '../types.d';
 import PuzzleCard from './PuzzleCard';
+import Loading from './Loading';
 import { UserProps } from '../types.d';
 
 const UserPuzzles = ({ username, userId, loggedIn }: UserProps) => {
@@ -90,20 +91,8 @@ const UserPuzzles = ({ username, userId, loggedIn }: UserProps) => {
       <h1>My Puzzles</h1>
       {loggedIn && (
         <div id="page-container">
-          {loading && (
-            <div className="loading-container">
-              <div className="rect1"></div>
-              <div className="rect2"></div>
-              <div className="rect3"></div>
-            </div>
-          )}
-          {isDeleting && (
-            <div className="loading-container">
-              <div className="rect1"></div>
-              <div className="rect2"></div>
-              <div className="rect3"></div>
-            </div>
-          )}
+          {loading && <Loading />}
+          {isDeleting && <Loading />}
           {confirmDelete && (
             <div className="deleting-container">
               <div className="confirm-delete">
