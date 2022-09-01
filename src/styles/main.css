@@ -32,13 +32,22 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+#puzzles {
+  display: grid;
+  grid: 3rem 1fr 2rem/1fr;
+  text-align: center;
+}
+#puzzles h1 {
+  color: #bf4f45;
+  text-decoration: underline;
+  padding: 1rem;
+}
 #puzzles .loading-container {
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 20rem;
 }
 #puzzles .loading-container * {
   background-color: #f2bc8d;
@@ -58,27 +67,29 @@ code {
           animation: expand 1s ease-in-out 0.2s infinite, shimmer 0.5s alternate 0.2s infinite;
 }
 #puzzles #puzzle-container {
-  text-align: center;
   padding: 1rem;
   color: #f2bc8d;
   display: grid;
   justify-items: center;
-  grid: 2rem 1fr/1fr;
+  grid: 2rem 1fr 2rem/1fr;
   gap: 1rem;
 }
-#puzzles #puzzle-container h1 {
-  color: #bf4f45;
-  text-decoration: underline;
+#puzzles #puzzle-container button:hover {
+  background-color: #f28066;
+  color: #2a3340;
 }
 #puzzles #puzzle-container .sort-buttons {
+  align-self: start;
   display: flex;
   gap: 1rem;
 }
 #puzzles #puzzle-container .sort-buttons button {
+  width: 90px;
   padding: 4px 16px;
+  font-size: 1.1rem;
 }
-#puzzles #puzzle-container .sort-buttons button:hover {
-  background-color: #f28066;
+#puzzles #puzzle-container .sort-buttons .active {
+  background-color: #bf4f45;
   color: #2a3340;
 }
 #puzzles #puzzle-container .puzzle-grid {
@@ -89,14 +100,42 @@ code {
   justify-content: center;
   gap: 1rem;
 }
-
-#user-puzzles #login-prompt {
+#puzzles #puzzle-container .page-container {
+  width: 100%;
+  align-self: bottom;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem;
+}
+#puzzles #puzzle-container .page-container button {
+  width: 72px;
+}
+#puzzles #puzzle-container .page-container .inactive {
+  opacity: 0.5;
+}
+#puzzles #puzzle-container .page-container .inactive:hover {
+  cursor: default;
   color: #f2bc8d;
+  background-color: #2a3340;
+}
+
+#user-puzzles {
+  display: grid;
+  grid: 3rem 1fr/1fr;
   text-align: center;
-  margin-top: 20rem;
+}
+#user-puzzles h1 {
+  color: #bf4f45;
+  text-decoration: underline;
+  padding: 1rem;
+}
+#user-puzzles #login-prompt {
+  margin-top: 2rem;
+  color: #f2bc8d;
 }
 #user-puzzles #page-container {
-  text-align: center;
   padding: 1rem;
   color: #f2bc8d;
   display: grid;
@@ -108,11 +147,7 @@ code {
   display: grid;
   gap: 1rem;
   justify-items: center;
-  grid: 2rem 1fr/1fr;
-}
-#user-puzzles #page-container #puzzle-container h1 {
-  color: #bf4f45;
-  text-decoration: underline;
+  grid: 1fr/1fr;
 }
 #user-puzzles #page-container #puzzle-container .puzzle-grid {
   width: 100%;
@@ -164,12 +199,10 @@ code {
   color: #2a3340;
 }
 #user-puzzles #page-container .loading-container {
-  text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 20rem;
 }
 #user-puzzles #page-container .loading-container * {
   background-color: #f2bc8d;
@@ -367,7 +400,6 @@ code {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 20rem;
 }
 #puzzle-form .uploading * {
   background-color: #f2bc8d;
@@ -486,9 +518,7 @@ code {
   display: grid;
   gap: 1rem;
   max-height: 400px;
-  width: 100%;
-  min-width: 300px;
-  max-width: 400px;
+  width: 400px;
   padding: 8px;
   border: 1px solid #bf4f45;
 }
@@ -524,7 +554,7 @@ code {
   border: 1px solid #bf4f45;
 }
 .puzzle .leaderboard-link:hover {
-  background-color: #bf4f45;
+  background-color: #f28066;
   color: #2a3340;
 }
 .puzzle .views {
@@ -543,6 +573,11 @@ code {
   justify-content: space-between;
 }
 
+@media only screen and (max-width: 640px) {
+  .puzzle {
+    width: 300px;
+  }
+}
 #uploader-container {
   z-index: 5;
   position: fixed;
@@ -890,13 +925,13 @@ code {
   }
 }
 #footer {
-  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 2rem;
   padding: 1rem;
   width: 100%;
+  height: 60px;
   color: #f2bc8d;
 }
 #footer img,

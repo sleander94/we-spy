@@ -1,11 +1,17 @@
 #user-puzzles {
+  display: grid;
+  grid: 3rem 1fr / 1fr;
+  text-align: center;
+  h1 {
+    color: $medium-red;
+    text-decoration: underline;
+    padding: 1rem;
+  }
   #login-prompt {
+    margin-top: 2rem;
     color: $light;
-    text-align: center;
-    margin-top: 20rem;
   }
   #page-container {
-    text-align: center;
     padding: 1rem;
     color: $light;
     display: grid;
@@ -16,11 +22,7 @@
       display: grid;
       gap: 1rem;
       justify-items: center;
-      grid: 2rem 1fr / 1fr;
-      h1 {
-        color: $medium-red;
-        text-decoration: underline;
-      }
+      grid: 1fr / 1fr;
       .puzzle-grid {
         width: 100%;
         max-width: 1800px;
@@ -72,12 +74,10 @@
       }
     }
     .loading-container {
-      text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-top: 20rem;
       * {
         background-color: $light;
         width: 20px;

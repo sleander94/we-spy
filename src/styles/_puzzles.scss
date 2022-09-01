@@ -75,6 +75,14 @@
       button {
         width: 72px;
       }
+      .inactive {
+        opacity: 0.5;
+      }
+      .inactive:hover {
+        cursor: default;
+        color: $light;
+        background-color: $dark;
+      }
     }
   }
 }

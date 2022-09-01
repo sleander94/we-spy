@@ -2,9 +2,7 @@
   display: grid;
   gap: 1rem;
   max-height: 400px;
-  width: 100%;
-  min-width: 300px;
-  max-width: 400px;
+  width: 400px;
   padding: 8px;
   border: 1px solid $medium-red;
   a {
@@ -39,7 +37,7 @@
     border: 1px solid $medium-red;
   }
   .leaderboard-link:hover {
-    background-color: $medium-red;
+    background-color: $soft-red;
     color: $dark;
   }
   .views {
@@ -57,5 +55,11 @@
   .author-date {
     display: flex;
     justify-content: space-between;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .puzzle {
+    width: 300px;
   }
 }
