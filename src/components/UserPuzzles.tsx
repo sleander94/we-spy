@@ -87,6 +87,7 @@ const UserPuzzles = ({ username, userId, loggedIn }: UserProps) => {
 
   return (
     <section id="user-puzzles">
+      <h1>My Puzzles</h1>
       {loggedIn && (
         <div id="page-container">
           {loading && (
@@ -123,7 +124,6 @@ const UserPuzzles = ({ username, userId, loggedIn }: UserProps) => {
           )}
           {!loading && !isDeleting && (
             <div id="puzzle-container">
-              <h1>My Puzzles</h1>
               <div className="puzzle-grid">
                 {puzzles.map((puzzle: Puzzle) => {
                   return (
