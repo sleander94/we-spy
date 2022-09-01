@@ -1,7 +1,6 @@
 # We Spy Photo Hunts
 
-## Live site: [wespy.app](https://wespy.app) 
-
+## Live site: [wespy.app](https://wespy.app)
 
 <p align="left" width="100%">
     <img width="60%" src="/public/images/wespydesktop.png" alt="desktop preview">
@@ -37,7 +36,6 @@ Create and play custom photo hunt puzzles.
 - Animations for finding items and starting puzzles
 - Edit your puzzles
 - Search puzzles
-- Implement adult image detection filter
 
 ## Author
 
