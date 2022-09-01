@@ -145,6 +145,7 @@ const Puzzles = () => {
           </div>
           <div className="page-container">
             <button
+              className={count <= pageLimit ? 'inactive' : ''}
               onClick={() => {
                 if (count > pageLimit) {
                   setCount(count - pageLimit);
@@ -155,6 +156,7 @@ const Puzzles = () => {
               {'<'} prev
             </button>
             <button
+              className={count > total ? 'inactive' : ''}
               onClick={() => {
                 if (count < total) {
                   setCount(count + pageLimit);
