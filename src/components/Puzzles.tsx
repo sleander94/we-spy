@@ -97,7 +97,7 @@ const Puzzles = () => {
 
   return (
     <section id="puzzles">
-      <h1>Puzzles</h1>
+      <h1>All Puzzles</h1>
       {loading && (
         <div className="loading-container">
           <div className="rect1"></div>
