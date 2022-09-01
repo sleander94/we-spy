@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import {
   collection,
+  getDoc,
   getDocs,
+  doc,
   query,
   orderBy,
   startAfter,
@@ -26,7 +28,21 @@ const Puzzles = () => {
 
   const storage = getStorage();
 
-  // Get all puzzles from firestore & their image URLS from storage before setting state
+  const pageLimit = 8;
+  const [count, setCount] = useState<number>(pageLimit);
+  const [total, setTotal] = useState<number>(0);
+
+  const getTotal = async () => {
+    const result = await getDoc(doc(db, 'puzzle-total', 'total'));
+    let data = result.data();
+    setTotal(data?.count);
+  };
+
+  useEffect(() => {
+    getTotal();
+  }, []);
+
+  // Get puzzles from firestore & their image URLS from storage before setting state
   const getPuzzles = async (
     dir: OrderByDirection,
     startIndex: QueryDocumentSnapshot<DocumentData> | null = null
@@ -40,12 +56,16 @@ const Puzzles = () => {
             collection(db, 'puzzles'),
             orderBy(sortMethod, dir),
             startAfter(startIndex),
-            limit(8)
+            limit(pageLimit)
           )
         );
       } else {
         results = await getDocs(
-          query(collection(db, 'puzzles'), orderBy(sortMethod, dir), limit(8))
+          query(
+            collection(db, 'puzzles'),
+            orderBy(sortMethod, dir),
+            limit(pageLimit)
+          )
         );
       }
       let docs = results.docs;
@@ -90,13 +110,19 @@ const Puzzles = () => {
           <div className="sort-buttons">
             <button
               className={sortMethod === 'views' ? 'active' : ''}
-              onClick={() => setSortMethod('views')}
+              onClick={() => {
+                setCount(pageLimit);
+                setSortMethod('views');
+              }}
             >
               Top
             </button>
             <button
               className={sortMethod === 'timestamp' ? 'active' : ''}
-              onClick={() => setSortMethod('timestamp')}
+              onClick={() => {
+                setCount(pageLimit);
+                setSortMethod('timestamp');
+              }}
             >
               Recent
             </button>
@@ -118,10 +144,24 @@ const Puzzles = () => {
             })}
           </div>
           <div className="page-container">
-            <button onClick={() => getPuzzles('asc', firstPuzzle)}>
+            <button
+              onClick={() => {
+                if (count > pageLimit) {
+                  setCount(count - pageLimit);
+                  getPuzzles('asc', firstPuzzle);
+                }
+              }}
+            >
               {'<'} prev
             </button>
-            <button onClick={() => getPuzzles('desc', lastPuzzle)}>
+            <button
+              onClick={() => {
+                if (count < total) {
+                  setCount(count + pageLimit);
+                  getPuzzles('desc', lastPuzzle);
+                }
+              }}
+            >
               next {'>'}
             </button>
           </div>
