@@ -6,7 +6,7 @@ import {
   Navigate,
 } from 'react-router-dom';
 import { auth } from './firebase/client';
-import { onAuthStateChanged, GoogleAuthProvider } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import PuzzleForm from './components/PuzzleForm';
 import Puzzles from './components/Puzzles';
 import PuzzlePage from './components/PuzzlePage';
@@ -22,8 +22,6 @@ const App = () => {
   const [username, setUsername] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
   const [loggedIn, setLoggedIn] = useState<boolean>(true);
-
-  const provider = new GoogleAuthProvider();
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
