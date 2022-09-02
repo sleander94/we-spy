@@ -97,9 +97,9 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
   // If x & y from mouse event are within item's coordinates, remove it from hiddenItems & mark it off list
   const handleGuess = (description: string) => {
     for (const item of hiddenItems) {
-      if (item.description == description) {
+      if (item.description === description) {
         if (x < item.maxX && x > item.minX && y < item.maxY && y > item.minY) {
-          if (hiddenItems.indexOf(item) || hiddenItems.indexOf(item) == 0) {
+          if (hiddenItems.indexOf(item) || hiddenItems.indexOf(item) === 0) {
             const filteredItems = hiddenItems.filter(
               (currItem) => item.description !== currItem.description
             );
@@ -115,7 +115,7 @@ const PuzzlePage = ({ username, userId }: FormProps) => {
 
   return (
     <section id="puzzle-page">
-      {hiddenItems.length == 0 && gameStart && (
+      {hiddenItems.length === 0 && gameStart && (
         <ScoreUploader username={username} timer={Number(timer)} />
       )}
       <div className="gameboard">

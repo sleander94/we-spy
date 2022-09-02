@@ -24,8 +24,8 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
 
   const handleChange = (name: string) => (e: SyntheticEvent) => {
     let target = e.target as HTMLInputElement;
-    if (name == 'title') setTitle(target.value);
-    if (name == 'description') setDescription(target.value);
+    if (name === 'title') setTitle(target.value);
+    if (name === 'description') setDescription(target.value);
   };
 
   // Get image file information from input element & save it in state
@@ -74,8 +74,8 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
 
   const validateTitleForm = () => {
     if (imageLoaded) {
-      if (title.length == 0) setError('Enter a title.');
-      else if (imageSrc.length == 0) setError('Select an image.');
+      if (title.length === 0) setError('Enter a title.');
+      else if (imageSrc.length === 0) setError('Select an image.');
       else if (!imageFile?.type.startsWith('image/'))
         setError('File needs to be an image (jpg, png, svg, etc.)');
       else if (adultContent)
@@ -289,7 +289,7 @@ const PuzzleForm = ({ username, userId, loggedIn }: UserProps) => {
               {!uploading && !uploaded && hiddenItems.length > 0 && (
                 <button type="submit">Create Puzzle</button>
               )}
-              {!uploading && !uploaded && hiddenItems.length == 0 && (
+              {!uploading && !uploaded && hiddenItems.length === 0 && (
                 <p>Add some items!</p>
               )}
             </form>
